@@ -21,6 +21,15 @@ lastName : {
         required: true,
         
     },
+    profileVerified : {
+        type : Boolean,
+       default : false
+    }, 
+    emailVerified : {
+        type : Boolean,
+        default : false
+    } ,
+
    
 
 

@@ -24,7 +24,9 @@ const UserRegister = async (req, res) => {
             firstName : userBody.firstName,
             lastName : userBody.lastName,
             email : userBody.email,
-            password : pass
+            password : pass,
+            profileVerified : userBody.profileVerified,
+            emailVerified : userBody.emailVerified
     });
         console.log("UserData instance created:", UserData);
 
@@ -66,6 +68,36 @@ const UserLogin = async (req, res) => {
                 Error: 'User not found',
                 Message: 'The provided email does not exist',
                 ErrorCode: 401,
+            });
+        }
+
+        // Check if email is verified
+        if (!user.emailVerified) {
+            console.log("Email not verified for user:", email);
+            return res.status(400).json({
+                Error: 'Email not verified',
+                Message: 'The email address has not been verified',
+                ErrorCode: 404,
+            });
+        }
+
+        // Check if profile is verified
+        if (!user.profileVerified) {
+            console.log("Profile not verified for user:", email);
+            return res.status(400).json({
+                Error: 'Profile not verified',
+                Message: 'The profile has not been verified',
+                ErrorCode: 405,
+            });
+        }
+
+        // Check if the password is not null or undefined
+        if (!user.password) {
+            console.log("User password is null or undefined:", email);
+            return res.status(400).json({
+                Error: 'Invalid credentials',
+                Message: 'The user password is missing or invalid',
+                ErrorCode: 403,
             });
         }
 
@@ -115,6 +147,7 @@ const UserLogin = async (req, res) => {
         });
     }
 };
+
 
 module.exports = {
     UserRegister , UserLogin

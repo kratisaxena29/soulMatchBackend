@@ -15,6 +15,11 @@ const ImageUpload = async (req, res) => {
             return res.status(400).send({ error: 'No file uploaded.' });
         }
 
+        const email = req.query.email;
+        if (!email) {
+            return res.status(400).send({ error: 'Email query parameter is required.' });
+        }
+
         const myFile = req.file.originalname.split('.');
         const fileType = myFile[myFile.length - 1];
         const fileName = `${uuid()}.${fileType}`;
@@ -24,6 +29,9 @@ const ImageUpload = async (req, res) => {
             Key: fileName, // File name you want to save as in S3
             Body: req.file.buffer,
             ACL: 'public-read', // Make file publicly readable (optional)
+            Metadata: {
+                email: email // Add email as metadata
+            }
         };
 
         s3.upload(params, (error, data) => {
