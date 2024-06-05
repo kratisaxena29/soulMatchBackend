@@ -1,17 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-imageUpload = new Schema({
-   
-    email : {
+const imageUploadSchema = new Schema({
+    email: {
         type: String,
-        require : true
+        required: true
+    },
+    imageUrl: {
+        type: String,
+        required: true
     },
     modifiedAt: {
         type: Date,
-    },
+        default: Date.now
+    }
 });
 
+const ImageUploadURL = mongoose.model('ImageUploadURL', imageUploadSchema);
 
-ImageUpload = mongoose.model('ImageUpload', imageUpload);
-module.exports = { ImageUpload };
+module.exports = { ImageUploadURL };

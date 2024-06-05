@@ -57,7 +57,7 @@ gender : {
    },
    motherTongue : {
     type: String,
-    required : true
+    required : false
    },
    height : {
     type: String,
@@ -241,10 +241,10 @@ gender : {
         type: String,
         required : true
     },
-    // fileUpload : {
-    //     type: Buffer,
-    //     required : true
-    // },
+    fileUpload : {
+        type: String,
+        default : null
+    },
 
     modifiedAt: {
         type: Date,

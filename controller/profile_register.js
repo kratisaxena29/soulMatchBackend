@@ -43,25 +43,35 @@ const profileRegister = async (req, res) => {
 
 const getAllProfiles = async (req, res) => {
     try {
-        // Get the minimum and maximum age from the request query parameters
-        const { ageRange , religion} = req.query;
+        // Get the email, ageRange, and religion from the request query parameters
+        const { email, ageRange, religion } = req.query;
 
-        // Check if both minAge and maxAge are undefined, if so, fetch all profiles
-        if (ageRange === undefined) {
-            const allProfiles = await ProfileRegister.find();
-            return res.status(200).json({
-                response: allProfiles,
-                Message: 'All profiles fetched successfully',
-                ErrorCode: null,
+        // Check if the email is provided, if not, return an error response
+        if (!email) {
+            return res.status(400).json({
+                Error: 'Email is required',
+                Message: 'You must provide an email to fetch profiles',
+                ErrorCode: 301,
             });
         }
 
-       
-        
-        console.log("...ageFilter...",ageRange)
+        // Define a filter object
+        let filter = { email: { $ne: email } };  // Exclude the profile with the provided email
 
-        // Query profiles collection with age filter
-        const profiles = await ProfileRegister.find({ Part_ageFrom: ageRange });
+        // Add age range filter if provided
+        if (ageRange !== undefined) {
+            filter.Part_ageFrom = ageRange;
+        }
+
+        // Add religion filter if provided
+        if (religion !== undefined) {
+            filter.religion = religion;
+        }
+
+        console.log("...Filter...", filter);
+
+        // Query profiles collection with the filter
+        const profiles = await ProfileRegister.find(filter);
 
         return res.status(200).json({
             response: profiles,
@@ -77,6 +87,7 @@ const getAllProfiles = async (req, res) => {
         });
     }
 };
+
 
 
 
