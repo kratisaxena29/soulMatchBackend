@@ -1,5 +1,8 @@
+const { response } = require("express");
+const { AllProfiles } = require("../model/AllProfilesId");
 const { ProfileRegister } = require("../model/profile_register");
 const { User } = require("../model/User");
+
 
 
 const profileRegister = async (req, res) => {
@@ -44,7 +47,7 @@ const profileRegister = async (req, res) => {
 const getAllProfiles = async (req, res) => {
     try {
         // Get the email, ageRange, and religion from the request query parameters
-        const { email, ageRange, religion } = req.query;
+        const { email, ageRange, religion , caste } = req.query;
 
         // Check if the email is provided, if not, return an error response
         if (!email) {
@@ -65,7 +68,11 @@ const getAllProfiles = async (req, res) => {
 
         // Add religion filter if provided
         if (religion !== undefined) {
-            filter.religion = religion;
+            filter.Part_Religion = religion;
+        }
+
+        if(caste !== undefined){
+            filter.Part_Caste = caste
         }
 
         console.log("...Filter...", filter);
@@ -90,8 +97,140 @@ const getAllProfiles = async (req, res) => {
 
 
 
+const pushAllTheprofilesId = async (req, res) => {
+    let iddata = req.body;
+
+    // Ensure iddata contains the email field
+    if (!iddata.email) {
+        return res.status(400).json({
+            response: null,
+            Message: "Email is required",
+            ErrorCode: 400,
+        });
+    }
+
+    try {
+        // Find the profile by email in ProfileRegister collection
+        const emailFind = await ProfileRegister.findOne({ email: iddata.email });
+        console.log("...emailFind...", emailFind);
+
+        // Check if the profile is found
+        if (!emailFind) {
+            return res.status(400).json({
+                response: null,
+                Message: "Email does not match",
+                ErrorCode: 404,
+            });
+        }
+
+        // Set profileId in iddata
+        iddata.profileId = emailFind._id;
+
+        // Check if the email already exists in AllProfiles collection
+        let existingProfile = await AllProfiles.findOne({ email: iddata.email });
+
+        if (existingProfile) {
+            // Push the new AllprofilesId into the existing array
+            console.log("...idData..", iddata);
+            existingProfile = await AllProfiles.findOneAndUpdate(
+                { email: iddata.email },
+                { $addToSet: { AllprofilesId: { $each: iddata.AllprofilesId } }, $set: { profileId: iddata.profileId } },
+                { new: true }
+            );
+            console.log("..updated data...", existingProfile);
+
+            // Construct the response
+            return res.status(200).json({
+                response: {
+                    email: iddata.email,
+                    profileId: emailFind._id,
+                    AllprofilesId: existingProfile._id, // Use the _id of the updated document
+                },
+                Message: 'Profile id Updated',
+                ErrorCode: null,
+            });
+        } else {
+            // Create a new document in AllProfiles collection
+            const data = new AllProfiles(iddata);
+            await data.save();
+            console.log("..data...", data);
+
+            // Construct the response
+            return res.status(200).json({
+                response: {
+                    email: iddata.email,
+                    profileId: emailFind._id,
+                    AllprofilesId: data._id, // Use the _id of the newly created document
+                },
+                Message: 'Profile id Saved',
+                ErrorCode: null,
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            Error: 'Details not saved',
+            Message: 'Database Issue',
+            ErrorCode: 308,
+        });
+    }
+};
+
+
+
+const getAlltheProfileId = async (req, res) => {
+    const { email } = req.query;
+console.log("..email...",email)
+    try {
+        // Step 1: Aggregate query to find the main profile and lookup profile details
+        const result = await AllProfiles.aggregate([
+            // Match the profile with the given email
+            { $match: { email: email } },
+            
+            // Lookup to join with profileregister collection using AllprofilesId
+            {
+                $lookup: {
+                    from: 'profileregisters', // The name of the profileregister collection
+                    localField: 'AllprofilesId', // Field in AllProfiles
+                    foreignField: '_id', // Field in profileregister
+                    as: 'allProfilesDetails' // Name for the array of matched documents
+                }
+            }
+        ]);
+console.log("...result ...",result)
+        if (result.length === 0) {
+            return res.status(404).json({
+                response: null,
+                Message: "Profile not found",
+                ErrorCode: 404
+            });
+        }
+
+        // Step 2: Return the aggregated result
+        return res.status(200).json({
+            response: result[0], // result[0] contains the main profile and joined details
+            Message: "Profiles fetched successfully",
+            ErrorCode: null
+        });
+    } catch (error) {
+        console.error("Error fetching profiles:", error);
+        res.status(500).json({
+            Error: 'Details not fetch',
+            Message: 'Database Issue',
+            ErrorCode: 308
+        });
+    }
+};
+
+
+
+
+
+
 
 module.exports = {
     profileRegister ,
-    getAllProfiles
+    getAllProfiles ,
+    pushAllTheprofilesId ,
+    getAlltheProfileId
 };
