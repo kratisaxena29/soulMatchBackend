@@ -9,6 +9,8 @@ const ImageUploader = require("../controller/ImageUpload")
 const dpUploader = require("../controller/dpUpload")
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+const ChatApi = require("../controller/ChatApi")
+const PaymentAPI = require("../controller/Payment")
 
 // Define routes
 
@@ -22,6 +24,16 @@ router.get('/getAllprofile',profile_register.getAllProfiles)
 router.post('/upload', upload.single('image'), ImageUploader.ImageUpload);
 router.post('/upload-dp', upload.single('imagedp'), dpUploader.dpUpload);
 router.get('/getimagepath',ImageUploader.getprofileByemail)
+router.post('/allProfileId',profile_register.pushAllTheprofilesId)
+router.get('/getallProfileById',profile_register.getAlltheProfileId)
+router.post('/conversation',ChatApi.createConversation)
+router.get('/conversation/:userId',ChatApi.getconversationByuserId)
+router.post('/message',ChatApi.createMessage)
+router.get('/message/:conversationId',ChatApi.getMessageByConversationId)
+router.post('/pay',PaymentAPI.newPayment)
+router.post('/status/:transactionId',PaymentAPI.checkStatus);
+router.post('/forgot-otp',Register.sendOTPForForgotPassword)
+router.post('/password-reset',Register.otpPasswordChange)
 
 // Export router
 module.exports = router;

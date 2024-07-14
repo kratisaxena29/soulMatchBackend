@@ -1,6 +1,12 @@
 const { User } = require("../model/User");
 const { decrypt, encrypt } = require('../middleware/encryp');
 const jwt = require('jsonwebtoken');
+const { ProfileRegister } = require("../model/profile_register");
+const otpGenerator = require("otp-generator");
+const nodemailer = require("nodemailer");
+const { OtpData } = require("../model/Otp"); 
+const {OtpForgotPassword } = require("../model/OtpforgotPassword")
+
 
 const UserRegister = async (req, res) => {
     try {
@@ -118,7 +124,9 @@ const UserLogin = async (req, res) => {
             process.env.JWT_SECRET || 'your_jwt_secret',
             { expiresIn: '1h' }
         );
-
+         
+        const fromProfile = await ProfileRegister.findOne({email : user.email })
+        console.log("....fromprofile...",fromProfile)
         console.log("Login successful for email:", email);
 
         // Send success response
@@ -126,10 +134,10 @@ const UserLogin = async (req, res) => {
             response: {
                 token,
                 user: {
-                    id: user._id,
-                    firstName: user.firstName,
+                    id: fromProfile._id,
+                    firstName: fromProfile.name,
                     lastName: user.lastName,
-                    email: user.email,
+                    email: fromProfile.email,
                 },
             },
             Message: 'Login successful',
@@ -149,8 +157,110 @@ const UserLogin = async (req, res) => {
 };
 
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use `true` for port 465, `false` for all other ports
+  auth: {
+    user: "krati123saxena@gmail.com",
+    pass: "skql dgov ylgu qile",
+  },
+});
+
+const sendOTPForForgotPassword = async (req, res) => {
+  try {
+    const { email , subject} = req.body;
+    console.log("Email:", email, "Subject:", subject);
+
+    const generateOTP = () => {
+      return otpGenerator.generate(6, {
+        digits: true,
+        upperCaseAlphabets: false,
+        specialChars: false,
+        lowerCaseAlphabets: false,
+      });
+    };
+
+    const otp = generateOTP();
+    console.log("Generated OTP:", otp);
+
+    // Check if the email already exists in the database
+    const existingOtpEntry = await OtpForgotPassword.findOne({ email });
+
+    if (existingOtpEntry) {
+      // Delete the existing OTP entry
+      await OtpForgotPassword.deleteOne({ email });
+    }
+
+    // Save new OTP to database
+    const otpEntry = new OtpForgotPassword({ email, subject ,otp});
+    await otpEntry.save();
+
+    const mailOptions = {
+      from: "krati123saxena@gmail.com",
+      to: email,
+      subject: subject,
+      text: `Your OTP is ${otp}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Error sending OTP.");
+      } else {
+        console.log("Email sent successfully:", info.response);
+        res.status(200).send("OTP sent successfully.");
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal server error.");
+  }
+};
+
+// const otpPasswordChange = async () => {
+//     try {
+//         const { email , otp , password } = req.body;
+
+//     } catch (error) {
+//         res.status(500).send("Internal server error")
+//     }
+// }
+
+const otpPasswordChange = async (req, res) => {
+    try {
+        const { email, otp, password } = req.body;
+console.log("...email...",email, otp , password)
+        // Verify OTP
+        const isOtpValid = await OtpForgotPassword.findOne({otp});
+        console.log("...isOtpValid...",isOtpValid)
+        if (!isOtpValid) {
+            return res.status(400).send("Invalid OTP");
+        }
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+        console.log("...user..",user)
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        // Hash the new password
+        const hashedPassword = await encrypt(password);
+        console.log("...hashedPassword...",hashedPassword)
+        // Update the user's password
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).send("Password changed successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal server error");
+    }
+};
+
 module.exports = {
-    UserRegister , UserLogin
+    UserRegister , UserLogin ,otpPasswordChange , sendOTPForForgotPassword
 };
 
 
