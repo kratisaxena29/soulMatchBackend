@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 const uuid = require('uuid').v4;
 const { ProfileRegister } = require('../model/profile_register'); // Adjust the path as necessary
 const {ImageUploadURL} = require("../model/ImageUpload")
+const {IdentificationImage } = require("../model/IdentificationImage")
+
 const s3 = new AWS.S3({
     credentials: {
         accessKeyId: "AKIAW3MEC3XJGSISPYIW",
@@ -92,7 +94,55 @@ const getprofileByemail = async (req,res) => {
     }
 }
 
+const IdentificationImageUpload = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send({ error: 'No file uploaded.' });
+        }
+
+        const myFile = req.file.originalname.split('.');
+        const fileType = myFile[myFile.length - 1];
+        const fileName = `${uuid()}.${fileType}`;
+
+        const params = {
+            Bucket: 'bucket-for-profile-picture',
+            Key: fileName,
+            Body: req.file.buffer,
+            ACL: 'public-read',
+        };
+
+        s3.upload(params, async (error, data) => {
+            if (error) {
+                console.error('Error uploading file:', error);
+                return res.status(500).send(error);
+            }
+
+            const email = req.params.email; // Get email from URL parameter
+            if (!email) {
+                return res.status(400).send({ error: 'Email parameter is required.' });
+            }
+
+            // Assuming IdentificationImage is your Mongoose model
+            const identImage = new IdentificationImage({
+                email,
+                identificationImageUrl: data.Location,
+            });
+
+            await identImage.save();
+
+            console.log("File uploaded successfully:", data);
+            res.status(200).send(identImage);
+        });
+
+    } catch (error) {
+        console.error("Error in ImageUpload:", error);
+        res.status(500).send({ error: 'Failed to upload image.' });
+    }
+};
+
+
 module.exports = {
     ImageUpload ,
-    getprofileByemail
+    getprofileByemail,
+    IdentificationImageUpload
 };

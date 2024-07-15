@@ -222,7 +222,22 @@ console.log("...result ...",result)
     }
 };
 
+const getprofileById = async(req,res) => {
+    try {
+        const profileId = req.params.id
 
+        const data = await ProfileRegister.findOne({_id : profileId})
+        if (!data) {
+            return res.status(404).json({ message: 'Profile not found' });
+          }
+      
+          res.status(200).json(data); 
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+    
+}
 
 
 
@@ -232,5 +247,6 @@ module.exports = {
     profileRegister ,
     getAllProfiles ,
     pushAllTheprofilesId ,
-    getAlltheProfileId
+    getAlltheProfileId , 
+    getprofileById
 };

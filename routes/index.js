@@ -34,6 +34,8 @@ router.post('/pay',PaymentAPI.newPayment)
 router.post('/status/:transactionId',PaymentAPI.checkStatus);
 router.post('/forgot-otp',Register.sendOTPForForgotPassword)
 router.post('/password-reset',Register.otpPasswordChange)
+router.get('/profile/:id',profile_register.getprofileById)
+router.post('/upload-identification/:email', upload.single('file'),ImageUploader.IdentificationImageUpload)
 
 // Export router
 module.exports = router;

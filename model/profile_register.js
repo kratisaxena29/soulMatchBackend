@@ -63,6 +63,22 @@ gender : {
     type: String,
     required : true
    },
+   hobbies : {
+    type: String,
+    required : true
+   },
+   address : {
+    type: String,
+    required : true
+   },
+   phoneNo : {
+    type: Number,
+    required : true
+   },
+   aboutYourSelf : {
+    type: String,
+    required : true
+   },
    weight : {
     type: String,
     required : true
