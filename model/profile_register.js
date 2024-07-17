@@ -141,7 +141,7 @@ gender : {
    },
    interest : {
     type: String,
-    required : true
+    required : false
    },
    family_Type: {
     type: String,
@@ -255,7 +255,7 @@ gender : {
     },
     Part_interest : {
         type: String,
-        required : true
+        required : false
     },
     fileUpload : {
         type: String,

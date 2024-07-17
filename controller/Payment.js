@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const axios = require('axios');
 
-const merchant_id = "M2204JQXSOPSG";
-const salt_key = "2bcfd812-4fb9-49a3-995d-f0bfc658dfcb";
+const merchant_id = "PGTESTPAYUAT72";
+const salt_key = "3072bda3-8069-4a2f-a566-221a46bfc7b8";
 
 const newPayment = async (req, res) => {
     console.log("Entering newPayment function");
@@ -35,7 +35,7 @@ const newPayment = async (req, res) => {
         const checksum = sha256 + '###' + keyIndex;
         console.log("Checksum:", checksum);
 
-        const prod_URL = "https://api.phonepe.com/apis/hermes";
+        const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
         const options = {
             method: 'POST',
             url: prod_URL,
