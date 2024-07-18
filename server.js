@@ -69,7 +69,7 @@ io.on('connection', socket => {
     });
 });
 
-let PORT = process.env.PORT || 3002;
+let PORT = process.env.PORT;
 server.listen(PORT, () => {
     console.log(`Server is up and running on ${PORT}..`);
 });
