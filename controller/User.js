@@ -258,9 +258,11 @@ console.log("...email...",email, otp , password)
         res.status(500).send("Internal server error");
     }
 };
-
+const Testing = async (req, res) => {
+    res.send('Hello from the backend');
+}
 module.exports = {
-    UserRegister , UserLogin ,otpPasswordChange , sendOTPForForgotPassword
+    UserRegister , UserLogin ,otpPasswordChange , sendOTPForForgotPassword ,Testing
 };
 
 

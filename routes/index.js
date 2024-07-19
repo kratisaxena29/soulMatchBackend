@@ -17,6 +17,7 @@ const OpenAI = require("../controller/OpenAi")
 
 
 router.post('/user-register', Register.UserRegister);
+router.get('/',Register.Testing)
 router.post('/email-otp',EmailOtp.sendOTPByEmail)
 router.post('/verify-otp',VerifyOtp.verifyOtp )
 router.post('/profile-register',profile_register.profileRegister)
