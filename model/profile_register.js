@@ -145,7 +145,7 @@ gender : {
    },
    family_Type: {
     type: String,
-    required : =false
+    required : false
    },
    FathersName : {
     type: String,
