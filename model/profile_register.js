@@ -63,10 +63,10 @@ gender : {
     type: String,
     required : true
    },
-   hobbies : {
+   hobbies : [{
     type: String,
-    required : true
-   },
+    required : false
+   }],
    address : {
     type: String,
     required : true
@@ -145,23 +145,23 @@ gender : {
    },
    family_Type: {
     type: String,
-    required : true
+    required : =false
    },
    FathersName : {
     type: String,
-    required : true
+    required : false
    },
    Fathers_prof : {
     type: String,
-    required : true
+    required : false
    },
    MothersName : {
     type: String,
-    required : true
+    required : false
    },
    Mothers_prof : {
     type: String,
-    required : true
+    required : false
    },
    sister : {
     type : Number
