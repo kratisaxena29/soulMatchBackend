@@ -83,10 +83,7 @@ gender : {
     type: String,
     required : true
    },
-   gothra : {
-    type: String,
-    required : true
-   }, 
+   
    petFriendly : {
     type: String,
     required : true
