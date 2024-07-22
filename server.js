@@ -11,7 +11,7 @@ app.use(cors({
     origin: "*"
 }));
 
-const MONGODBURI =  'mongodb://13.234.33.6:27017/soulMatch';
+const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
 // const MONGODBURI = process.env.MONGO_URI
 mongoose.connect(MONGODBURI, {
     useUnifiedTopology: true,
