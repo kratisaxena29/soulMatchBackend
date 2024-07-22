@@ -27,6 +27,10 @@ jobs:
     - run: npm ci
     - run: |
           touch .env
-          echo "${{ secrets.DEV }}" > .env
+          echo "PHONE_PE_HOST_URL="https://api-preprod.phonepe.com/apis/pg-sandbox"" > .env
+          echo "MERCHANT_ID="PGTESTPAYUAT"" >> .env
+          echo "SALT_INDEX="1"" >> .env
+          echo "PORT="3001"" >> .env
+          echo "MONGO_URI="mongodb://13.200.211.15:27017/soulMatch"" >> .env
     - run: pm2 restart soulMatchBackend
 
