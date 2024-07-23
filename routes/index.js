@@ -16,29 +16,29 @@ const PaymentAPI = require("../controller/Payment")
 // Define routes
 
 
-router.post('/user-register', Register.UserRegister);
-router.get('/',Register.Testing)
-router.post('/email-otp',EmailOtp.sendOTPByEmail)
-router.post('/verify-otp',VerifyOtp.verifyOtp )
-router.post('/profile-register',profile_register.profileRegister)
-router.post('/login',Register.UserLogin)
-router.get('/getAllprofile',profile_register.getAllProfiles) 
-router.post('/upload', upload.single('image'), ImageUploader.ImageUpload);
-router.post('/upload-dp', upload.single('imagedp'), dpUploader.dpUpload);
-router.get('/getimagepath',ImageUploader.getprofileByemail)
-router.post('/allProfileId',profile_register.pushAllTheprofilesId)
-router.get('/getallProfileById',profile_register.getAlltheProfileId)
-router.post('/conversation',ChatApi.createConversation)
-router.get('/conversation/:userId',ChatApi.getconversationByuserId)
-router.post('/message',ChatApi.createMessage)
-router.get('/message/:conversationId',ChatApi.getMessageByConversationId)
-router.post('/pay',PaymentAPI.newPayment)
-router.post('/status/:transactionId',PaymentAPI.checkStatus);
-router.post('/forgot-otp',Register.sendOTPForForgotPassword)
-router.post('/password-reset',Register.otpPasswordChange)
-router.get('/profile/:id',profile_register.getprofileById)
+router.post('/api/user-register', Register.UserRegister);
+router.get('/api/',Register.Testing)
+router.post('/api/email-otp',EmailOtp.sendOTPByEmail)
+router.post('/api/verify-otp',VerifyOtp.verifyOtp )
+router.post('/api/profile-register',profile_register.profileRegister)
+router.post('/api/login',Register.UserLogin)
+router.get('/api/getAllprofile',profile_register.getAllProfiles) 
+router.post('/api/upload', upload.single('image'), ImageUploader.ImageUpload);
+router.post('/api/upload-dp', upload.single('imagedp'), dpUploader.dpUpload);
+router.get('/api/getimagepath',ImageUploader.getprofileByemail)
+router.post('/api/allProfileId',profile_register.pushAllTheprofilesId)
+router.get('/api/getallProfileById',profile_register.getAlltheProfileId)
+router.post('/api/conversation',ChatApi.createConversation)
+router.get('/api/conversation/:userId',ChatApi.getconversationByuserId)
+router.post('/api/message',ChatApi.createMessage)
+router.get('/api/message/:conversationId',ChatApi.getMessageByConversationId)
+router.post('/api/pay',PaymentAPI.newPayment)
+router.post('/api/status/:transactionId',PaymentAPI.checkStatus);
+router.post('/api/forgot-otp',Register.sendOTPForForgotPassword)
+router.post('/api/password-reset',Register.otpPasswordChange)
+router.get('/api/profile/:id',profile_register.getprofileById)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
-router.post('/upload-identification/:email', upload.single('file'),ImageUploader.IdentificationImageUpload)
+router.post('/api/upload-identification/:email', upload.single('file'),ImageUploader.IdentificationImageUpload)
 
 // Export router
 module.exports = router;
