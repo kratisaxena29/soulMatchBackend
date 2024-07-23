@@ -14,7 +14,7 @@ const newPayment = async (req, res) => {
             merchantTransactionId: merchantTransactionId,
             merchantUserId: req.body.MUID,
             amount: req.body.amount,
-            redirectUrl: `http://localhost:3002/status/${merchantTransactionId}`,
+            redirectUrl: `http://13.200.211.15:3001/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -119,7 +119,7 @@ const checkStatus = async (req, res) => {
             console.log("Response from Payment Status API:", response.data);
 
             if (response.data.success === true && response.data.code === 'PAYMENT_SUCCESS') {
-                const url = `http://localhost:3000/success`;
+                const url = `http://13.200.211.15:3001/`;
                 console.log("Redirecting to:", url);
                 return res.redirect(url);
             } else if (response.data.code === 'PAYMENT_PENDING' && retryCount < 5) { // Increased retry attempts
