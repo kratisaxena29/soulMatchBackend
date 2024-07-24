@@ -1,3 +1,4 @@
+const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
 
@@ -67,9 +68,9 @@ const newPayment = async (req, res) => {
             }
         })
         .catch(function (error) {
-            console.error("Error in payment initiation:", error);
+            console.error("Error in payment initiation:", error.response ? error.response.data : error.message);
             res.status(500).send({
-                message: error.message,
+                message: error.response ? error.response.data.message : error.message,
                 success: false
             });
         });
