@@ -84,6 +84,8 @@ const newPayment = async (req, res) => {
     }
 };
 
+
+
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");
 
@@ -143,7 +145,9 @@ const checkStatus = async (req, res) => {
     retryCheckStatus(0); // Start the first check with retry count 0
 };
 
+
+
+
 module.exports = {
-    newPayment,
-    checkStatus
+    newPayment , checkStatus
 };
