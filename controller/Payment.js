@@ -10,6 +10,10 @@ const newPayment = async (req, res) => {
 
     try {
         const merchantTransactionId = req.body.transactionId;
+        console.log("Merchant Transaction ID:", merchantTransactionId);
+        console.log("Merchant ID:", merchant_id); // Log merchant ID
+        console.log("Salt Key:", salt_key); // Log salt key
+
         const data = {
             merchantId: merchant_id,
             merchantTransactionId: merchantTransactionId,
@@ -24,19 +28,19 @@ const newPayment = async (req, res) => {
 
         const payload = JSON.stringify(data);
         const payloadMain = Buffer.from(payload).toString('base64');
-        console.log("Base64 Encoded Payload:", payloadMain);
+        // console.log("Base64 Encoded Payload:", payloadMain);
 
         const keyIndex = 1;
         const string = payloadMain + '/pg/v1/pay' + salt_key;
-        console.log("String for Hashing:", string);
+        // console.log("String for Hashing:", string);
 
         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
-        console.log("SHA256 Hash:", sha256);
+        // console.log("SHA256 Hash:", sha256);
 
         const checksum = sha256 + '###' + keyIndex;
-        console.log("Checksum:", checksum);
+        // console.log("Checksum:", checksum);
 
-        const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
+        const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
         const options = {
             method: 'POST',
             url: prod_URL,
@@ -44,7 +48,7 @@ const newPayment = async (req, res) => {
                 accept: 'application/json',
                 'Content-Type': 'application/json',
                 'X-VERIFY': checksum,
-                'X-MERCHANT-ID': merchant_id // Add the merchant ID header
+                // 'X-MERCHANT-ID': merchant_id // Add the merchant ID header
             },
             data: {
                 request: payloadMain
@@ -83,6 +87,7 @@ const newPayment = async (req, res) => {
         });
     }
 };
+
 
 
 
