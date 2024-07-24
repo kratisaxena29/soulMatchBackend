@@ -15,7 +15,7 @@ const newPayment = async (req, res) => {
             merchantTransactionId: merchantTransactionId,
             merchantUserId: req.body.MUID,
             amount: req.body.amount,
-            redirectUrl: `http://13.200.211.15:3001/status/${merchantTransactionId}`,
+            redirectUrl: `https://soulmatch.co.in/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -120,14 +120,14 @@ const checkStatus = async (req, res) => {
             console.log("Response from Payment Status API:", response.data);
 
             if (response.data.success === true && response.data.code === 'PAYMENT_SUCCESS') {
-                const url = `http://13.200.211.15:3001/payment-success`;
+                const url = `https://soulmatch.co.in/payment-success`;
                 console.log("Redirecting to:", url);
                 return res.redirect(url);
             } else if (response.data.code === 'PAYMENT_PENDING' && retryCount < 5) { // Increased retry attempts
                 console.log(`Payment is pending. Retrying... Attempt ${retryCount + 1}`);
                 setTimeout(() => retryCheckStatus(retryCount + 1), 10000); // Increased delay to 10 seconds
             } else {
-                const url = `http://13.200.211.15:3001/payment-fail`;
+                const url = `https://soulmatch.co.in/payment-fail`;
                 console.log("Redirecting to:", url);
                 return res.redirect(url);
             }
