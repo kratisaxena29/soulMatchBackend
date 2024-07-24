@@ -7,10 +7,19 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 
+const allowedOrigins = ['https://soulmatch.co.in'];
+
 app.use(cors({
-    origin: "https://soulmatch.co.in",
+    origin: function (origin, callback) {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, origin);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
+
 // const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
 const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
 // const MONGODBURI = process.env.MONGO_URI

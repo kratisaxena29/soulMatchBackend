@@ -45,8 +45,6 @@ const newPayment = async (req, res) => {
             method: 'POST',
             url: prod_URL,
             headers: {
-                "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
                 accept: 'application/json',
                 'Content-Type': 'application/json',
                 'X-VERIFY': checksum,
@@ -89,9 +87,6 @@ const newPayment = async (req, res) => {
         });
     }
 };
-
-
-
 
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");
@@ -152,9 +147,6 @@ const checkStatus = async (req, res) => {
     retryCheckStatus(0); // Start the first check with retry count 0
 };
 
-
-
-
 module.exports = {
-    newPayment , checkStatus
+    newPayment, checkStatus
 };
