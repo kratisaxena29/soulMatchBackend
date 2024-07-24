@@ -8,7 +8,10 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 app.use(cors({
-    origin: "*"
+    origin: "https://soulmatch.co.in",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
 }));
 const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
 // const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
