@@ -45,6 +45,8 @@ const newPayment = async (req, res) => {
             method: 'POST',
             url: prod_URL,
             headers: {
+                "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
                 accept: 'application/json',
                 'Content-Type': 'application/json',
                 'X-VERIFY': checksum,
