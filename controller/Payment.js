@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const axios = require('axios');
 
-const merchant_id = "PGTESTPAYUAT72";
-const salt_key = "3072bda3-8069-4a2f-a566-221a46bfc7b8";
+const merchant_id = "M2204JQXSOPSG";
+const salt_key = "2bcfd812-4fb9-49a3-995d-f0bfc658dfcb";
 
 const newPayment = async (req, res) => {
     console.log("Entering newPayment function");
