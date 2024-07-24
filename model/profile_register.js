@@ -29,7 +29,7 @@ gender : {
    },
    city : {
     type: String,
-    required : true
+    required : false
    },
    religion : {
     type: String,
@@ -99,6 +99,10 @@ gender : {
    profession : {
     type: String,
     required : true
+   },
+   country : {
+    type: String,
+    required : false
    },
    annualIncome : {
     type: String,
@@ -204,6 +208,10 @@ gender : {
     },
     Part_motherTongue : {
         type: String,
+        required : true
+    },
+    Part_subCaste : {
+        type : String, 
         required : true
     },
     Part_height : {

@@ -46,8 +46,8 @@ const profileRegister = async (req, res) => {
 
 const getAllProfiles = async (req, res) => {
     try {
-        // Get the email, ageRange, and religion from the request query parameters
-        const { email, ageRange, religion , caste } = req.query;
+        // Get the email, ageRange, religion, caste, and subcaste from the request query parameters
+        const { email, ageRange, religion, caste, subcaste } = req.query;
 
         // Check if the email is provided, if not, return an error response
         if (!email) {
@@ -62,17 +62,24 @@ const getAllProfiles = async (req, res) => {
         let filter = { email: { $ne: email } };  // Exclude the profile with the provided email
 
         // Add age range filter if provided
-        if (ageRange !== undefined) {
-            filter.Part_ageFrom = ageRange;
+        if (ageRange) {
+            const [minAge, maxAge] = ageRange.split('-').map(Number);
+            filter.Part_ageFrom = { $gte: minAge, $lte: maxAge };
         }
 
-        // Add religion filter if provided
-        if (religion !== undefined) {
+        // Add religion filter if provided and not empty
+        if (religion) {
             filter.Part_Religion = religion;
         }
 
-        if(caste !== undefined){
-            filter.Part_Caste = caste
+        // Add caste filter if provided and not empty
+        if (caste) {
+            filter.Part_Caste = caste;
+        }
+
+        // Add subcaste filter if provided and not empty
+        if (subcaste) {
+            filter.Part_subCaste = subcaste;
         }
 
         console.log("...Filter...", filter);
@@ -94,6 +101,7 @@ const getAllProfiles = async (req, res) => {
         });
     }
 };
+
 
 
 
