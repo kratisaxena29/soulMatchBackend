@@ -7,6 +7,7 @@ const merchant_id =  "M2204JQXSOPSG";
 const salt_key =  "2bcfd812-4fb9-49a3-995d-f0bfc658dfcb";
 
 const newPayment = async (req, res) => {
+    console.log("...nepayment...")
     try {
       const merchantTransactionId = req.body.transactionId;
       const data = {
@@ -42,19 +43,20 @@ const newPayment = async (req, res) => {
         }
       };
   
-      const response = await axios.request(options);
-  
-      if (response.data.success) {
-        const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
-        res.json({ paymentUrl: redirectUrl });
-      } else {
-        res.status(500).json({ message: response.data.message, success: false });
-      }
+      axios.request(options).then(function(response){
+          console.log(response.data)
+          const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
+          console.log("...response...", redirectUrl)
+          return res.status(200).json({ url: redirectUrl });
+      })
+      .catch(function(error){
+          console.log(error)
+          return res.status(500).json({ message: error.message });
+      })
     } catch (error) {
       res.status(500).json({ message: error.message, success: false });
     }
-  };
-  
+};
 
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");
