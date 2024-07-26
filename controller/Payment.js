@@ -7,82 +7,54 @@ const merchant_id =  "M2204JQXSOPSG";
 const salt_key =  "2bcfd812-4fb9-49a3-995d-f0bfc658dfcb";
 
 const newPayment = async (req, res) => {
-    console.log("Entering newPayment function");
-
     try {
-        const merchantTransactionId = req.body.transactionId;
-        console.log("Merchant Transaction ID:", merchantTransactionId);
-
-        const data = {
-            merchantId: merchant_id,
-            merchantTransactionId: merchantTransactionId,
-            merchantUserId: req.body.MUID,
-            amount: req.body.amount,
-            redirectUrl: `https://soulmatch.co.in/status/${merchantTransactionId}`,
-            redirectMode: 'POST',
-            paymentInstrument: {
-                type: 'PAY_PAGE'
-            }
-        };
-
-        const payload = JSON.stringify(data);
-        const payloadMain = Buffer.from(payload).toString('base64');
-
-        const keyIndex = 1;
-        const string = payloadMain + '/pg/v1/pay' + salt_key;
-
-        const sha256 = crypto.createHash('sha256').update(string).digest('hex');
-        const checksum = sha256 + '###' + keyIndex;
-
-        const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
-        const options = {
-            method: 'POST',
-            url: prod_URL,
-            headers: {
-                accept: 'application/json',
-                'Content-Type': 'application/json',
-                'X-VERIFY': checksum,
-            },
-            data: {
-                request: payloadMain
-            }
-        };
-
-        console.log("Request Options:", options);
-
-        axios.request(options).then(function (response) {
-            console.log("Response Status:", response.status);
-            console.log("Response Headers:", response.headers);
-            console.log("Response Data:", response.data);
-
-            if (response.data.success) {
-                const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
-                console.log("Redirecting to:", redirectUrl);
-                return res.redirect(redirectUrl);
-            } else {
-                console.log("Payment initiation failed:", response.data);
-                res.status(500).send({
-                    message: response.data.message,
-                    success: false
-                });
-            }
-        })
-        .catch(function (error) {
-            console.error("Error in payment initiation:", error.response ? error.response.data : error.message);
-            res.status(500).send({
-                message: error.response ? error.response.data.message : error.message,
-                success: false
-            });
-        });
-
+      const merchantTransactionId = req.body.transactionId;
+      const data = {
+        merchantId: merchant_id,
+        merchantTransactionId: merchantTransactionId,
+        merchantUserId: req.body.MUID,
+        amount: req.body.amount,
+        redirectUrl: `https://soulmatch.co.in/status/${merchantTransactionId}`,
+        redirectMode: 'POST',
+        paymentInstrument: {
+          type: 'PAY_PAGE'
+        }
+      };
+  
+      const payload = JSON.stringify(data);
+      const payloadMain = Buffer.from(payload).toString('base64');
+      const keyIndex = 1;
+      const string = payloadMain + '/pg/v1/pay' + salt_key;
+      const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+      const checksum = sha256 + '###' + keyIndex;
+  
+      const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+      const options = {
+        method: 'POST',
+        url: prod_URL,
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-VERIFY': checksum,
+        },
+        data: {
+          request: payloadMain
+        }
+      };
+  
+      const response = await axios.request(options);
+  
+      if (response.data.success) {
+        const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
+        res.json({ paymentUrl: redirectUrl });
+      } else {
+        res.status(500).json({ message: response.data.message, success: false });
+      }
     } catch (error) {
-        console.error("Exception in newPayment function:", error);
-        res.status(500).send({
-            message: error.message,
-            success: false
-        });
+      res.status(500).json({ message: error.message, success: false });
     }
-};
+  };
+  
 
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");
