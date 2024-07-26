@@ -17,12 +17,12 @@ const verifyOtp = async (req, res) => {
                 return res.status(400).send("User not found.");
             }
 
-            user.emailVerified = true;
+            user.Verified = true;
             const updatedUser = await user.save();
             console.log("Updated user:", updatedUser);
 
             // Check if the emailVerified field is updated
-            if (updatedUser.emailVerified) {
+            if (updatedUser.Verified) {
                 console.log("Email verified successfully.");
             } else {
                 console.error("Failed to update emailVerified field.");

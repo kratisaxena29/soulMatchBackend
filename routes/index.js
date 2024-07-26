@@ -3,6 +3,7 @@ const multer = require('multer');
 const router = express.Router();
 const Register = require("../controller/User")
 const EmailOtp = require("../controller/emailOtp")
+const PhoneOtp = require("../controller/phoneOtp")
 const VerifyOtp = require("../controller/verifyOtp")
 const profile_register = require("../controller/profile_register")
 const ImageUploader = require("../controller/ImageUpload")
@@ -19,6 +20,8 @@ const PaymentAPI = require("../controller/Payment")
 router.post('/user-register', Register.UserRegister);
 router.get('/',Register.Testing)
 router.post('/email-otp',EmailOtp.sendOTPByEmail)
+router.post('/phone-otp',PhoneOtp.sendOTPByPhone)
+router.post('/phoneverify-otp',PhoneOtp.verifyPhoneOtp)
 router.post('/verify-otp',VerifyOtp.verifyOtp )
 router.post('/profile-register',profile_register.profileRegister)
 router.post('/login',Register.UserLogin)

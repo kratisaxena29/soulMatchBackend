@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 profileRegister = new Schema({
     email : {
         type: String,
-        required : true 
+        required : false 
     },
 name : {
     type: String,
@@ -73,7 +73,7 @@ gender : {
    },
    phoneNo : {
     type: Number,
-    required : true
+    required : false
    },
    aboutYourSelf : {
     type: String,

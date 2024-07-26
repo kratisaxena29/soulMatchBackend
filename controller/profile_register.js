@@ -9,6 +9,7 @@ const profileRegister = async (req, res) => {
     let profileData = req.body;
 
     try {
+if (profileData.email !== ""){
         const matchingEmail = await User.findOne({ email: profileData.email });
         console.log("..matchingEmail..", matchingEmail);
 
@@ -19,8 +20,6 @@ const profileRegister = async (req, res) => {
                 ErrorCode: 404,
             });
         }
-
-        // Save profile data
         const profile = new ProfileRegister(profileData);
         await profile.save();
 
@@ -33,6 +32,34 @@ const profileRegister = async (req, res) => {
             Message: 'Profile Details Saved and profile verified',
             ErrorCode: null,
         });
+    }
+    if (profileData.phoneno !== ""){
+        const matchingPhoneNo = await User.findOne({ phoneno: profileData.phoneNo });
+        console.log("..matchingPhoneNo..", matchingPhoneNo);
+
+        if (!matchingPhoneNo) {
+            return res.status(400).json({
+                response: null,
+                Message: 'Phone no does not match',
+                ErrorCode: 404,
+            });
+        }
+
+        const profile = new ProfileRegister(profileData);
+        await profile.save();
+
+        // Update profileVerified field in User collection
+        matchingPhoneNo.profileVerified = true;
+        await matchingPhoneNo.save();
+
+        return res.status(200).json({
+            response: profile,
+            Message: 'Profile Details Saved and profile verified',
+            ErrorCode: null,
+        });
+    }
+        // Save profile data
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({
