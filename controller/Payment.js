@@ -15,7 +15,7 @@ const newPayment = async (req, res) => {
         merchantTransactionId: merchantTransactionId,
         merchantUserId: req.body.MUID,
         amount: req.body.amount,
-        redirectUrl: `https://soulmatch.co.in/status/${merchantTransactionId}`,
+        redirectUrl: `https://api.soulmatch.co.in/status/${merchantTransactionId}`,
         redirectMode: 'POST',
         paymentInstrument: {
           type: 'PAY_PAGE'
