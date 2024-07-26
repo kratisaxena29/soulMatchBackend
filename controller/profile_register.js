@@ -73,20 +73,28 @@ if (profileData.email !== ""){
 
 const getAllProfiles = async (req, res) => {
     try {
-        // Get the email, ageRange, religion, caste, and subcaste from the request query parameters
-        const { email, ageRange, religion, caste, subcaste } = req.query;
+        // Get the email, ageRange, religion, caste, subcaste, and phoneno from the request query parameters
+        const { email, ageRange, religion, caste, subcaste, phoneno } = req.query;
 
-        // Check if the email is provided, if not, return an error response
-        if (!email) {
+        // Define a filter object
+        let filter = {};
+
+        // Check if neither email nor phoneno is provided, return an error response
+        if (!email && !phoneno) {
             return res.status(400).json({
-                Error: 'Email is required',
-                Message: 'You must provide an email to fetch profiles',
+                Error: 'Email or Phone Number is required',
+                Message: 'You must provide either an email or phone number to fetch profiles',
                 ErrorCode: 301,
             });
         }
 
-        // Define a filter object
-        let filter = { email: { $ne: email } };  // Exclude the profile with the provided email
+        // Exclude the profile with the provided email or phone number
+        if (email) {
+            filter.email = { $ne: email };
+        }
+        if (phoneno) {
+            filter.phoneNo = { $ne: phoneno };
+        }
 
         // Add age range filter if provided
         if (ageRange) {
@@ -132,43 +140,49 @@ const getAllProfiles = async (req, res) => {
 
 
 
+
+
 const pushAllTheprofilesId = async (req, res) => {
     let iddata = req.body;
 
-    // Ensure iddata contains the email field
-    if (!iddata.email) {
+    console.log("...idData...");
+
+    // Ensure iddata contains either email or phoneno field
+    if (!iddata.email && !iddata.phoneno) {
         return res.status(400).json({
             response: null,
-            Message: "Email is required",
+            Message: "Email or Phone number is required",
             ErrorCode: 400,
         });
     }
 
     try {
-        // Find the profile by email in ProfileRegister collection
-        const emailFind = await ProfileRegister.findOne({ email: iddata.email });
-        console.log("...emailFind...", emailFind);
+        // Find the profile by email or phone number in ProfileRegister collection
+        const query = iddata.email ? { email: iddata.email } : { phoneNo: iddata.phoneno };
+        const profileFind = await ProfileRegister.findOne(query);
+        console.log("...profileFind...", profileFind);
 
         // Check if the profile is found
-        if (!emailFind) {
+        if (!profileFind) {
             return res.status(400).json({
                 response: null,
-                Message: "Email does not match",
+                Message: "Profile does not match",
                 ErrorCode: 404,
             });
         }
 
         // Set profileId in iddata
-        iddata.profileId = emailFind._id;
+        iddata.profileId = profileFind._id;
 
-        // Check if the email already exists in AllProfiles collection
-        let existingProfile = await AllProfiles.findOne({ email: iddata.email });
-
+        // Check if the profile already exists in AllProfiles collection
+        const profileQuery = iddata.email ? { email: iddata.email } : { phoneno: iddata.phoneno };
+        let existingProfile = await AllProfiles.findOne(profileQuery);
+console.log("...existingProfile...",existingProfile)
         if (existingProfile) {
             // Push the new AllprofilesId into the existing array
             console.log("...idData..", iddata);
             existingProfile = await AllProfiles.findOneAndUpdate(
-                { email: iddata.email },
+                profileQuery,
                 { $addToSet: { AllprofilesId: { $each: iddata.AllprofilesId } }, $set: { profileId: iddata.profileId } },
                 { new: true }
             );
@@ -178,10 +192,11 @@ const pushAllTheprofilesId = async (req, res) => {
             return res.status(200).json({
                 response: {
                     email: iddata.email,
-                    profileId: emailFind._id,
+                    phoneno: iddata.phoneno,
+                    profileId: profileFind._id,
                     AllprofilesId: existingProfile._id, // Use the _id of the updated document
                 },
-                Message: 'Profile id Updated',
+                Message: 'Profile ID updated',
                 ErrorCode: null,
             });
         } else {
@@ -194,10 +209,11 @@ const pushAllTheprofilesId = async (req, res) => {
             return res.status(200).json({
                 response: {
                     email: iddata.email,
-                    profileId: emailFind._id,
+                    phoneno: iddata.phoneno,
+                    profileId: profileFind._id,
                     AllprofilesId: data._id, // Use the _id of the newly created document
                 },
-                Message: 'Profile id Saved',
+                Message: 'Profile ID saved',
                 ErrorCode: null,
             });
         }
@@ -205,7 +221,7 @@ const pushAllTheprofilesId = async (req, res) => {
         console.error(error);
         res.status(500).json({
             Error: 'Details not saved',
-            Message: 'Database Issue',
+            Message: 'Database issue',
             ErrorCode: 308,
         });
     }
@@ -213,16 +229,29 @@ const pushAllTheprofilesId = async (req, res) => {
 
 
 
+
 const getAlltheProfileId = async (req, res) => {
-    const { email } = req.query;
-console.log("..email...",email)
+    const { email, phoneno } = req.query;
+    console.log("..email...", email);
+    console.log("..phoneno...", phoneno);
+
     try {
-        // Step 1: Aggregate query to find the main profile and lookup profile details
+        // Check if either email or phoneno is provided
+        if (!email && !phoneno) {
+            return res.status(400).json({
+                response: null,
+                Message: "Email or Phone number query parameter is required.",
+                ErrorCode: 400
+            });
+        }
+
+        // Create the match query object
+        const matchQuery = email ? { email: email } : { phoneno: phoneno };
+        console.log("..matchQuery...", matchQuery);
+
+        // Aggregate query to find the main profile and lookup profile details
         const result = await AllProfiles.aggregate([
-            // Match the profile with the given email
-            { $match: { email: email } },
-            
-            // Lookup to join with profileregister collection using AllprofilesId
+            { $match: matchQuery },
             {
                 $lookup: {
                     from: 'profileregisters', // The name of the profileregister collection
@@ -232,7 +261,8 @@ console.log("..email...",email)
                 }
             }
         ]);
-console.log("...result ...",result)
+
+        console.log("...result ...", result);
         if (result.length === 0) {
             return res.status(404).json({
                 response: null,
@@ -241,7 +271,7 @@ console.log("...result ...",result)
             });
         }
 
-        // Step 2: Return the aggregated result
+        // Return the aggregated result
         return res.status(200).json({
             response: result[0], // result[0] contains the main profile and joined details
             Message: "Profiles fetched successfully",
@@ -250,7 +280,7 @@ console.log("...result ...",result)
     } catch (error) {
         console.error("Error fetching profiles:", error);
         res.status(500).json({
-            Error: 'Details not fetch',
+            Error: 'Details not fetched',
             Message: 'Database Issue',
             ErrorCode: 308
         });

@@ -35,32 +35,44 @@ const ImageUpload = async (req, res) => {
                 return res.status(500).send(error);
             }
 
-            // Assuming req.query.email is used to identify the profile
+            // Check if either email or phoneno is provided
             const email = req.query.email;
-            if (!email) {
-                return res.status(400).send({ error: 'Email query parameter is required.' });
+            const phoneno = req.query.phoneno;
+            if (!email && !phoneno) {
+                return res.status(400).send({ error: 'Email or Phone number query parameter is required.' });
             }
 
+            // Create the query object to find the profile
+            const query = email ? { email: email } : { phoneNo: phoneno };
+console.log("..query...",query)
             // Update the profile with the URL of the uploaded image
             const profile = await ProfileRegister.findOneAndUpdate(
-                { email: email }, // Assuming you identify profiles by email
-                { fileUpload: data.Location }, // Update the fileUpload field with the image URL
-                { new: true } // Return the updated document
+                query,
+                { fileUpload: data.Location },
+                { new: true }
             );
 
             if (!profile) {
                 return res.status(404).send({ error: 'Profile not found.' });
             }
 
+            // Create the update object
+            const updateData = {
+                imageUrl: data.Location,
+                modifiedAt: new Date()
+            };
+            if (email) {
+                updateData.email = email;
+            }
+            if (phoneno) {
+                updateData.phoneno = phoneno;
+            }
+
             // Update or create the document in ImageUploadURL collection
             const imageUpload = await ImageUploadURL.findOneAndUpdate(
-                { email: email }, // Find the document by email
-                {
-                    email: email,
-                    imageUrl: data.Location,
-                    modifiedAt: new Date()
-                }, // Update the fields
-                { upsert: true, new: true } // Create the document if it doesn't exist and return the new document
+                query,
+                updateData,
+                { upsert: true, new: true }
             );
 
             console.log("File uploaded successfully:", data);
@@ -72,6 +84,8 @@ const ImageUpload = async (req, res) => {
         res.status(500).send({ error: 'Failed to upload image.' });
     }
 };
+
+
 
 
 const getprofileByemail = async (req,res) => {

@@ -1,29 +1,35 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-allprofiles = new Schema({
-    email : {
-        required : "true",
-        type : String
+const allprofiles = new Schema({
+    email: {
+        type: String,
+        required: function() {
+            return !this.phoneno; // Email is required if phoneno is not provided
+        }
     },
-   profileId : {
-    type : mongoose.Schema.Types.ObjectId,
-    ref : 'ProfileRegister',
-    required : true,
-   },
-    AllprofilesId : [
+    phoneno: {
+        type: String,
+        required: function() {
+            return !this.email; // Phoneno is required if email is not provided
+        }
+    },
+    profileId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ProfileRegister',
+        required: true,
+    },
+    AllprofilesId: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref : 'ProfileRegister',
-            required : true
+            ref: 'ProfileRegister',
+            required: true
         }
     ],
-   
     modifiedAt: {
         type: Date,
     },
 });
 
-
-AllProfiles = mongoose.model('AllProfiles', allprofiles);
+const AllProfiles = mongoose.model('AllProfiles', allprofiles);
 module.exports = { AllProfiles };
