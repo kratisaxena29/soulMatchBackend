@@ -20,18 +20,18 @@ const allowedOrigins = ['https://soulmatch.co.in'];
 //     credentials: true
 // }));
 
-// app.use(cors({
-//     origin: 'https://soulmatch.co.in',
-//     methods: ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-//     credentials: true,
-//   }));
 app.use(cors({
-  origin: "*"  
-}))
+    origin: 'https://soulmatch.co.in',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  }));
+// app.use(cors({
+//   origin: "*"  
+// }))
 
-const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
-// const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
+// const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
+const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
 // const MONGODBURI = process.env.MONGO_URI
 mongoose.connect(MONGODBURI, {
     useUnifiedTopology: true,
