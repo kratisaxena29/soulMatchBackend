@@ -31,6 +31,6 @@ jobs:
           echo "MERCHANT_ID="PGTESTPAYUAT"" >> .env
           echo "SALT_INDEX="1"" >> .env
           echo "PORT="3001"" >> .env
-          echo "MONGO_URI="mongodb://admin:Pdi73vGW@13.200.211.15:27017/?authMechanism=DEFAULT&authSource=soulMatch"" >> .env
+          echo "MONGO_URI="mongodb://13.200.211.15:27017/soulMatch"" >> .env
     - run: pm2 restart soulMatchBackend
 
