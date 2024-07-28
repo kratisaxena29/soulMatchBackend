@@ -9,17 +9,23 @@ const { Server } = require('socket.io');
 
 const allowedOrigins = ['https://soulmatch.co.in'];
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, origin);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true
-}));
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         if (allowedOrigins.includes(origin) || !origin) {
+//             callback(null, origin);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+//     credentials: true
+// }));
 
+app.use(cors({
+    origin: 'https://soulmatch.co.in',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  }));
 // app.use(cors({
 //   origin: "*"  
 // }))
@@ -47,7 +53,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "https://soulmatch.co.in",
-        methods: ["GET", "POST"]
+        // origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type'],
+        credentials: true,
     }
 });
 

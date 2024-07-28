@@ -1,6 +1,16 @@
 const otpGenerator = require("otp-generator");
 const { Phoneotpdata } = require("../model/phoneOtp"); // Adjust the path as needed
-const { User } = require("../model/User")
+const { User } = require("../model/User");
+const AWS = require('aws-sdk');
+
+// Configure AWS SDK
+AWS.config.update({
+  accessKeyId: process.env.accessKeyId,
+  secretAccessKey: process.env.secretAccessKey,
+  region: process.env.region
+});
+
+const sns = new AWS.SNS();
 
 const sendOTPByPhone = async (req, res) => {
   try {
@@ -31,9 +41,21 @@ const sendOTPByPhone = async (req, res) => {
     const otpEntry = new Phoneotpdata({ phoneno, otp, subject });
     await otpEntry.save();
 
-    // Optionally, send OTP via SMS here using an SMS service provider
+    // Send OTP via SMS using AWS SNS
+    const params = {
+      Message: `Your OTP code is ${otp}`,
+      PhoneNumber: phoneno,
+      // Optionally, you can add other parameters like MessageAttributes
+    };
 
-    res.status(200).json({ message: 'OTP sent successfully' });
+    sns.publish(params, (err, data) => {
+      if (err) {
+        console.error("Error sending SMS:", err);
+        return res.status(500).send("Failed to send OTP.");
+      }
+      console.log("SMS sent successfully:", data);
+      res.status(200).json({ message: 'OTP sent successfully' });
+    });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Internal server error.");
