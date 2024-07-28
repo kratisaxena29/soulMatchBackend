@@ -79,6 +79,10 @@ gender : {
     type: String,
     required : true
    },
+   plan : {
+    type: String,
+    default : null
+   },
    weight : {
     type: String,
     required : true

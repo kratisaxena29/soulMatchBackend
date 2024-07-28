@@ -1,62 +1,94 @@
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
+const { ProfileRegister } = require('../model/profile_register');
 
 // Use environment variables for sensitive data
 const merchant_id =  "M2204JQXSOPSG";
 const salt_key =  "2bcfd812-4fb9-49a3-995d-f0bfc658dfcb";
 
 const newPayment = async (req, res) => {
-    console.log("...nepayment...")
-    try {
-      const merchantTransactionId = req.body.transactionId;
+  console.log("...newpayment...");
+
+  try {
+      const { email, phoneno, transactionId, MUID, amount } = req.body;
+console.log("...req.body...",req.body)
+      // Check if either email or phoneno is provided
+      if (!email && !phoneno) {
+          return res.status(400).json({
+              message: 'Email or Phone Number is required',
+              success: false,
+              errorCode: 301,
+          });
+      }
+
+      // Fetch the user profile based on email or phoneno
+      let userProfile;
+      if (email) {
+          userProfile = await ProfileRegister.findOne({ email });
+      } else if (phoneno) {
+          userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
+      }
+
+      // Check if user profile is found
+      if (!userProfile) {
+          return res.status(404).json({
+              message: 'User Profile not found',
+              success: false,
+              errorCode: 404,
+          });
+      }
+
+      const merchantTransactionId = transactionId;
       const data = {
-        merchantId: merchant_id,
-        merchantTransactionId: merchantTransactionId,
-        merchantUserId: req.body.MUID,
-        amount: req.body.amount,
-        redirectUrl: `https://api.soulmatch.co.in/status/${merchantTransactionId}`,
-        redirectMode: 'POST',
-        paymentInstrument: {
-          type: 'PAY_PAGE'
-        }
+          merchantId: merchant_id,
+          merchantTransactionId: merchantTransactionId,
+          merchantUserId: MUID,
+          amount: amount,
+          redirectUrl: `https://api.soulmatch.co.in/status/${merchantTransactionId}`,
+          redirectMode: 'POST',
+          paymentInstrument: {
+              type: 'PAY_PAGE'
+          }
       };
-  
+
       const payload = JSON.stringify(data);
       const payloadMain = Buffer.from(payload).toString('base64');
       const keyIndex = 1;
       const string = payloadMain + '/pg/v1/pay' + salt_key;
       const sha256 = crypto.createHash('sha256').update(string).digest('hex');
       const checksum = sha256 + '###' + keyIndex;
-  
+
       const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
       const options = {
-        method: 'POST',
-        url: prod_URL,
-        headers: {
-          accept: 'application/json',
-          'Content-Type': 'application/json',
-          'X-VERIFY': checksum,
-        },
-        data: {
-          request: payloadMain
-        }
+          method: 'POST',
+          url: prod_URL,
+          headers: {
+              accept: 'application/json',
+              'Content-Type': 'application/json',
+              'X-VERIFY': checksum,
+          },
+          data: {
+              request: payloadMain
+          }
       };
-  
+
       axios.request(options).then(function(response){
-          console.log(response.data)
+          console.log(response.data);
           const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
-          console.log("...response...", redirectUrl)
+          console.log("...response...", redirectUrl);
           return res.status(200).json({ url: redirectUrl });
       })
       .catch(function(error){
-          console.log(error)
+          console.log(error);
           return res.status(500).json({ message: error.message });
-      })
-    } catch (error) {
+      });
+  } catch (error) {
+      console.error(error);
       res.status(500).json({ message: error.message, success: false });
-    }
+  }
 };
+
 
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");

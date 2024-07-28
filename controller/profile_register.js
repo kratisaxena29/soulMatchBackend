@@ -117,10 +117,76 @@ const getAllProfiles = async (req, res) => {
             filter.Part_subCaste = subcaste;
         }
 
-        console.log("...Filter...", filter);
+        // Fetch the profile associated with the provided email or phone number to get the plan value
+        let userProfile;
+        if (email) {
+            userProfile = await ProfileRegister.findOne({ email });
+        } else if (phoneno) {
+            userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
+        }
 
-        // Query profiles collection with the filter
-        const profiles = await ProfileRegister.find(filter);
+        if (!userProfile) {
+            return res.status(404).json({
+                Error: 'User Profile not found',
+                Message: 'No profile found with the provided email or phone number',
+                ErrorCode: 404,
+            });
+        }
+
+        console.log("...userProfile.plan...", userProfile.plan);
+
+        // Determine the limit based on the plan value
+        let limit = 0;
+        // if (userProfile) {
+        //     switch (userProfile.plan) {
+        //         case 1:
+        //             // console.log("...case 1...",)
+        //             limit = 2;
+        //             break;
+        //         case 2:
+        //             // console.log("...case 2...",)
+        //             limit = 3;
+        //             break;
+        //         case 3:
+        //             // console.log("...case 3...",)
+        //             limit = 0; // No limit for plan value 3
+        //             break;
+        //         default:
+        //             // console.log("...case default...",)
+        //             limit = 0; // Default no limit
+        //             break;
+        //     }
+        // }
+
+        if(userProfile.plan === "1")
+        {
+            console.log("....under 1")
+            limit  = 2
+        }
+        else if(userProfile.plan === "2")
+        {
+            console.log("...under 2...")
+            limit  = 3
+        }
+        else if (userProfile.plan === "3")
+        {
+            console.log("...under 3...")
+            limit  = 0
+        }else if (userProfile.plan === null){
+            limit  = 0
+        }
+
+        console.log("...limit...", limit);
+
+        // Query profiles collection with the filter and limit the results if applicable
+        let profiles;
+        if (limit > 0) {
+            profiles = await ProfileRegister.find(filter).limit(limit);
+            console.log("..profile 1...")
+        } else {
+            profiles = await ProfileRegister.find(filter);
+            console.log("..profile 2...")
+        }
 
         return res.status(200).json({
             response: profiles,
@@ -136,6 +202,8 @@ const getAllProfiles = async (req, res) => {
         });
     }
 };
+
+
 
 
 
