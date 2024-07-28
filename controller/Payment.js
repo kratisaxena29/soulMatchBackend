@@ -12,7 +12,7 @@ const newPayment = async (req, res) => {
 
   try {
       const { email, phoneno, transactionId, MUID, amount } = req.body;
-console.log("...req.body...",req.body)
+          console.log("...req.body...",req.body)
       // Check if either email or phoneno is provided
       if (!email && !phoneno) {
           return res.status(400).json({
@@ -73,10 +73,12 @@ console.log("...req.body...",req.body)
           }
       };
 
-      axios.request(options).then(function(response){
+      axios.request(options).then(async function(response){
           console.log(response.data);
           const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
           console.log("...response...", redirectUrl);
+          userProfile.plan = amount;
+          await userProfile.save();
           return res.status(200).json({ url: redirectUrl });
       })
       .catch(function(error){
