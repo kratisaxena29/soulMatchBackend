@@ -12,10 +12,22 @@ AWS.config.update({
 
 const sns = new AWS.SNS();
 
+
+
 const sendOTPByPhone = async (req, res) => {
   try {
     const { phoneno, subject } = req.body;
     console.log("Phone Number:", phoneno, "Subject:", subject);
+
+    const user = await User.findOne({ phoneno });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Mark user as confirmed
+    user.isConfirmed = true;
+    await user.save();
+    console.log('User confirmed successfully:', user);
 
     const generateOTP = () => {
       return otpGenerator.generate(6, {
@@ -29,38 +41,38 @@ const sendOTPByPhone = async (req, res) => {
     const otp = generateOTP();
     console.log("Generated OTP:", otp);
 
-    // Check if an OTP entry already exists for the given phone number
     const existingOtpEntry = await Phoneotpdata.findOne({ phoneno });
-
     if (existingOtpEntry) {
-      // Delete the existing OTP entry
       await Phoneotpdata.deleteOne({ phoneno });
     }
 
-    // Save new OTP to database
     const otpEntry = new Phoneotpdata({ phoneno, otp, subject });
     await otpEntry.save();
 
-    // Send OTP via SMS using AWS SNS
+    // Ensure phone number is in E.164 format
+    const formattedPhoneNo = phoneno.startsWith('+') ? phoneno : `+${phoneno}`;
+    console.log("...formatedd..",formattedPhoneNo)
     const params = {
       Message: `Your OTP code is ${otp}`,
-      PhoneNumber: phoneno,
-      // Optionally, you can add other parameters like MessageAttributes
+      PhoneNumber: formattedPhoneNo,
     };
 
     sns.publish(params, (err, data) => {
       if (err) {
-        console.error("Error sending SMS:", err);
-        return res.status(500).send("Failed to send OTP.");
+        console.error("Error sending SMS:", err.message);
+        return res.status(500).json({ error: "Failed to send OTP.", details: err });
       }
       console.log("SMS sent successfully:", data);
-      res.status(200).json({ message: 'OTP sent successfully' });
+      res.status(200).json({ message: 'OTP sent successfully', data });
     });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Internal server error.");
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Internal server error.", details: error });
   }
 };
+
+
+
 
 
 
