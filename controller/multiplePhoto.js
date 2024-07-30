@@ -1,29 +1,17 @@
-const multer = require('multer');
-const aws = require('aws-sdk');
-const multerS3 = require('multer-s3');
-const Photurl = require('../model/multiplePhoto');  // Adjust the path to your actual model file
+const AWS = require('aws-sdk');
+const uuid = require('uuid').v4;
+const {Photurl }= require('../model/multiplePhoto');  // Adjust the path to your actual model file
 
 // AWS S3 configuration
-const s3 = new aws.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+const s3 = new AWS.S3({
+  credentials: {
+      accessKeyId: "AKIAW3MEC3XJGSISPYIW",
+      secretAccessKey: "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",
+  },
+  region: "ap-south-1",
 });
 
-// Multer S3 configuration for file upload
-const uploadPhotos = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: 'bucket-for-profile-picture',
-    acl: 'public-read',
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-      cb(null, Date.now().toString() + '_' + file.originalname);
-    },
-  }),
-});
+
 
 // Endpoint to handle file upload
 const photoUrlfunction = async (req, res) => {
@@ -31,30 +19,61 @@ const photoUrlfunction = async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  const email = req.params.email;  // Use params for route parameters
-  const photoUrl = req.file.location;
-  console.log("..photoUrl...", photoUrl);
+  const email = req.params.email;
 
   try {
-   
-   
-   
-      // User doesn't exist, create a new document
-    const  photurl = new Photurl({ email, photoUrl: [photoUrl] });
-    
+    const myFile = req.file.originalname.split('.');
+    const fileType = myFile[myFile.length - 1];
+    const fileName = `${uuid()}.${fileType}`;
 
-    await photurl.save();
-    res.json({
-      message: 'File uploaded and URL saved successfully',
-      fileUrl: photoUrl
+    const params = {
+      Bucket: 'bucket-for-profile-picture',
+      Key: fileName,
+      Body: req.file.buffer,
+      ACL: 'public-read',
+    };
+
+    // Upload file to S3
+    s3.upload(params, async (error, data) => {
+      if (error) {
+        console.error('Error uploading to S3:', error);
+        return res.status(500).send('Error uploading file.');
+      }
+
+      const photoUrl = data.Location;
+
+      try {
+        // Check if a document with the given email exists
+        let existingProfile = await Photurl.findOne({ email });
+
+        if (existingProfile) {
+          // If the document exists, update it by adding the new photoUrl to the array
+          existingProfile.photoUrl.push(photoUrl);
+          await existingProfile.save();
+        } else {
+          // If the document does not exist, create a new one
+          existingProfile = new Photurl({ email, photoUrl: [photoUrl] });
+          await existingProfile.save();
+        }
+
+        res.json({
+          message: 'File uploaded and URL saved successfully',
+          fileUrl: photoUrl,
+        });
+      } catch (dbError) {
+        console.error('Error saving photo URL:', dbError);
+        res.status(500).send('Server error');
+      }
     });
   } catch (error) {
-    console.error('Error saving photo URL:', error);
+    console.error('Error in file upload process:', error);
     res.status(500).send('Server error');
   }
 };
 
+
+
+
 module.exports = {
   photoUrlfunction,
-  uploadPhotos,
 };

@@ -205,11 +205,6 @@ const getAllProfiles = async (req, res) => {
 
 
 
-
-
-
-
-
 const pushAllTheprofilesId = async (req, res) => {
     let iddata = req.body;
 
@@ -296,8 +291,6 @@ console.log("...existingProfile...",existingProfile)
 };
 
 
-
-
 const getAlltheProfileId = async (req, res) => {
     const { email, phoneno } = req.query;
     console.log("..email...", email);
@@ -357,23 +350,30 @@ const getAlltheProfileId = async (req, res) => {
 
 const getprofileById = async(req,res) => {
     try {
-        const profileId = req.params.id
-
-        const data = await ProfileRegister.findOne({_id : profileId})
+        const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      console.log("...profileIdentifier...",profileIdentifier)
+        let data;
+    
+        // Check if the identifier is an email or a phone number
+        if (profileIdentifier.includes('@')) {
+          // Assuming it's an email
+          data = await ProfileRegister.findOne({ email: profileIdentifier });
+        } else {
+          // Assuming it's a phone number
+          data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+        }
+    
         if (!data) {
-            return res.status(404).json({ message: 'Profile not found' });
-          }
-      
-          res.status(200).json(data); 
-    } catch (error) {
+          return res.status(404).json({ message: 'Profile not found' });
+        }
+    
+        res.status(200).json(data);
+      } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
-    }
+      }
     
 }
-
-
-
 
 
 module.exports = {

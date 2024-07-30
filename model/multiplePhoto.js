@@ -19,4 +19,4 @@ photurl = new Schema({
 
 
 Photurl = mongoose.model('Photurl', photurl);
-module.exports = { photurl };
+module.exports = { Photurl };

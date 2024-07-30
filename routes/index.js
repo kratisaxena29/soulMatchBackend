@@ -13,6 +13,7 @@ const upload = multer({ storage });
 const ChatApi = require("../controller/ChatApi")
 const PaymentAPI = require("../controller/Payment")
 const uplaodMultiplePhoto = require("../controller/multiplePhoto")
+const uploadData = multer({storage})
 // const OpenAI = require("../controller/OpenAi")
 
 // Define routes
@@ -40,10 +41,10 @@ router.post('/pay',PaymentAPI.newPayment)
 router.post('/status/:transactionId',PaymentAPI.checkStatus);
 router.post('/forgot-otp',Register.sendOTPForForgotPassword)
 router.post('/password-reset',Register.otpPasswordChange)
-router.get('/profile/:id',profile_register.getprofileById)
+router.get('/profile/:identifier',profile_register.getprofileById)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
 
-router.post('/upload-multiple-photo/:email', uplaodMultiplePhoto.uploadPhotos.single('file'),uplaodMultiplePhoto.photoUrlfunction)
+router.post('/upload-multiple-photo/:email', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)
 
 // Export router
 module.exports = router;
