@@ -31,7 +31,7 @@ app.use(cors({
 // }))
 
 // const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
-const MONGODBURI =  'mongodb://13.200.211.15:27017/soulMatch';
+const MONGODBURI =  'mongodb://admin:Y2wRrSw6kTT0ONt@13.200.211.15:27017/?authMechanism=DEFAULT&authSource=soulMatch';
 // const MONGODBURI = 'mongodb://admin:Pdi73vGW@13.200.211.15:27017/?authMechanism=DEFAULT&authSource=soulMatch'
 // const MONGODBURI = process.env.MONGO_URI
 mongoose.connect(MONGODBURI, {
