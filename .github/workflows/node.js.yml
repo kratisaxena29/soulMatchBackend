@@ -30,7 +30,11 @@ jobs:
           echo "PHONE_PE_HOST_URL="https://api-preprod.phonepe.com/apis/pg-sandbox"" > .env
           echo "MERCHANT_ID="PGTESTPAYUAT"" >> .env
           echo "SALT_INDEX="1"" >> .env
+          echo "SALT_KEY="099eb0cd-02cf-4e2a-8aca-3e6c6aff0399"" >> .env
           echo "PORT="3001"" >> .env
-          echo "MONGO_URI="mongodb://admin:Y2wRrSw6kTT0ONt@13.200.211.15:27017/?authMechanism=DEFAULT&authSource=soulMatch"" >> .env
+          echo "MONGO_URI="mongodb://admin:Y2wRrSw6kTT0ONt@13.200.211.15:27017/?authSource=admin"" >> .env
+          echo "accessKeyId="AKIAW3MEC3XJPO4RQMXU"" >> .env
+          echo "secretAccessKey="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"" >> .env
+          echo "region="ap-south-1"" >> .env
     - run: pm2 restart soulMatchBackend
 
