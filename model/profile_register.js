@@ -51,10 +51,7 @@ gender : {
     type: String,
     required : true
    },
-   origin : {
-    type: String,
-    required : true
-   },
+  
    motherTongue : {
     type: String,
     required : false
@@ -67,9 +64,13 @@ gender : {
     type: String,
     required : false
    }],
-   address : {
+   drink : {
     type: String,
     required : true
+   },
+   address : {
+    type: String,
+    required : false
    },
    phoneNo : {
     type: Number,

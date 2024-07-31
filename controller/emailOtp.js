@@ -63,6 +63,34 @@ const sendOTPByEmail = async (req, res) => {
   }
 };
 
+const sendWelcomeProfileByEmail = async (req, res) => {
+  try {
+  
+  const {email } = req.body.email
+  
+    const mailOptions = {
+      from: "krati123saxena@gmail.com",
+      to: email,
+      subject: "Welcome to Soulmatch. ",
+      text: `Thank you for registering with us. Please login to start browsing profiles. Happy matchmaking.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Error sending welcome email.");
+      } else {
+        console.log("Email sent successfully:");
+        res.status(200).send("welcome email send successfully");
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal server error.");
+  }
+};
+
 module.exports = {
   sendOTPByEmail,
+  sendWelcomeProfileByEmail
 };

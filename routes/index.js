@@ -22,6 +22,7 @@ const uploadData = multer({storage})
 router.post('/user-register', Register.UserRegister);
 router.get('/',Register.Testing)
 router.post('/email-otp',EmailOtp.sendOTPByEmail)
+router.post('/welcome-email',EmailOtp.sendWelcomeProfileByEmail)
 router.post('/phone-otp',PhoneOtp.sendOTPByPhone)
 router.post('/phoneverify-otp',PhoneOtp.verifyPhoneOtp)
 router.post('/verify-otp',VerifyOtp.verifyOtp )

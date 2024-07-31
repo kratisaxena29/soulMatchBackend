@@ -352,20 +352,21 @@ const getprofileById = async(req,res) => {
     try {
         const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
       console.log("...profileIdentifier...",profileIdentifier)
-        let data;
+        // let data;
     
-        // Check if the identifier is an email or a phone number
-        if (profileIdentifier.includes('@')) {
-          // Assuming it's an email
-          data = await ProfileRegister.findOne({ email: profileIdentifier });
-        } else {
-          // Assuming it's a phone number
-          data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
-        }
+        // // Check if the identifier is an email or a phone number
+        // if (profileIdentifier.includes('@')) {
+        //   // Assuming it's an email
+        //   data = await ProfileRegister.findOne({ email: profileIdentifier });
+        // } else {
+        //   // Assuming it's a phone number
+        //   data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+        // }
     
-        if (!data) {
-          return res.status(404).json({ message: 'Profile not found' });
-        }
+        // if (!data) {
+        //   return res.status(404).json({ message: 'Profile not found' });
+        // }
+        const data = await ProfileRegister.findOne({_id : profileIdentifier})
     
         res.status(200).json(data);
       } catch (error) {
