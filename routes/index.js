@@ -27,6 +27,7 @@ router.post('/phone-otp',PhoneOtp.sendOTPByPhone)
 router.post('/phoneverify-otp',PhoneOtp.verifyPhoneOtp)
 router.post('/verify-otp',VerifyOtp.verifyOtp )
 router.post('/profile-register',profile_register.profileRegister)
+router.put('/ProfileUpdate/:identifier',profile_register.ProfileUpdate)
 router.post('/login',Register.UserLogin)
 router.get('/getAllprofile',profile_register.getAllProfiles) 
 router.post('/upload', upload.single('image'), ImageUploader.ImageUpload);
@@ -43,6 +44,7 @@ router.post('/status/:transactionId',PaymentAPI.checkStatus);
 router.post('/forgot-otp',Register.sendOTPForForgotPassword)
 router.post('/password-reset',Register.otpPasswordChange)
 router.get('/profile/:identifier',profile_register.getprofileById)
+router.get('/profilebyid/:identifier',profile_register.getOneprofileById)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
 
 router.post('/upload-multiple-photo/:email', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)

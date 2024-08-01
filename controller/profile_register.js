@@ -376,11 +376,82 @@ const getprofileById = async(req,res) => {
     
 }
 
+const getOneprofileById = async(req,res) => {
+    try {
+        const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      console.log("...profileIdentifier...",profileIdentifier)
+        let data;
+    
+        // Check if the identifier is an email or a phone number
+        if (profileIdentifier.includes('@')) {
+          // Assuming it's an email
+          data = await ProfileRegister.findOne({ email: profileIdentifier });
+        } else {
+          // Assuming it's a phone number
+          data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+        }
+    
+        if (!data) {
+          return res.status(404).json({ message: 'Profile not found' });
+        }
+  
+    
+        res.status(200).json(data);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    
+}
+
+const ProfileUpdate = async (req, res) => {
+    try {
+      const profileIdentifier = req.params.identifier;
+      console.log("...profileIdentifier...", profileIdentifier);
+  
+      const updateData = req.body;
+  
+      // Remove phone and email fields from updateData if they exist
+      delete updateData.phone;
+      delete updateData.email;
+  
+      // Log the update data for debugging
+      console.log("...updateData...", updateData);
+  
+      // Determine if the identifier is an email or phone number
+      const identifierField = profileIdentifier.includes('@') ? 'email' : 'phone';
+  
+      // Find the profile and update the fields
+      const updatedProfile = await ProfileRegister.findOneAndUpdate(
+        { [identifierField]: profileIdentifier },
+        { $set: updateData },
+        { new: true, upsert: false }  // Ensure upsert is false
+      );
+  
+      // Check if the profile was found and updated
+      if (!updatedProfile) {
+        console.log("Profile not found with identifier:", profileIdentifier);
+        return res.status(404).json({ message: "Profile not found" });
+      }
+  
+      console.log("Updated Profile:", updatedProfile);
+      res.status(200).json(updatedProfile);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+
+
+
 
 module.exports = {
     profileRegister ,
     getAllProfiles ,
     pushAllTheprofilesId ,
     getAlltheProfileId , 
-    getprofileById
+    getprofileById,
+    ProfileUpdate,
+    getOneprofileById
 };
