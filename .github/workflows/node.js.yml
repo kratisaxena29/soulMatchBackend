@@ -27,14 +27,14 @@ jobs:
     - run: npm ci
     - run: |
           touch .env
-          echo "PHONE_PE_HOST_URL=${{ secrets.PHONE_PE_HOST_URL }}"" > .env
-          echo "MERCHANT_ID=${{ secrets.MERCHANT_ID }}"" >> .env
+          echo "PHONE_PE_HOST_URL="${{ secrets.PHONE_PE_HOST_URL }}"" > .env
+          echo "MERCHANT_ID="${{ secrets.MERCHANT_ID }}"" >> .env
           echo "SALT_INDEX="1"" >> .env
-          echo "SALT_KEY=${{ secrets.SALT_KEY }}"" >> .env
+          echo "SALT_KEY="${{ secrets.SALT_KEY }}"" >> .env
           echo "PORT="3001"" >> .env
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}"" >> .env
-          echo "accessKeyId=${{ secrets.ACCESSKEYID }}"" >> .env
-          echo "secretAccessKey=${{ secrets.SECRETACCESSKEY }}"" >> .env
+          echo "MONGO_URI="${{ secrets.MONGO_URI }}"" >> .env
+          echo "accessKeyId="${{ secrets.ACCESSKEYID }}"" >> .env
+          echo "secretAccessKey="${{ secrets.SECRETACCESSKEY }}"" >> .env
           echo "region="ap-south-1"" >> .env
     - run: pm2 restart soulMatchBackend
 
