@@ -7,7 +7,7 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 
-const allowedOrigins = ['https://soulmatch.co.in'];
+// const allowedOrigins = ['https://soulmatch.co.in'];
 
 // app.use(cors({
 //     origin: function (origin, callback) {
@@ -20,8 +20,9 @@ const allowedOrigins = ['https://soulmatch.co.in'];
 //     credentials: true
 // }));
 
+const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
 app.use(cors({
-    origin: 'https://soulmatch.co.in',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -58,7 +59,7 @@ app.use(require('./routes'));
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://soulmatch.co.in",
+        origin: allowedOrigins,
         // origin: 'http://localhost:3000',
         methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type'],
