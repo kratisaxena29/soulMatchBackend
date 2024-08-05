@@ -2,6 +2,8 @@ const { response } = require("express");
 const { AllProfiles } = require("../model/AllProfilesId");
 const { ProfileRegister } = require("../model/profile_register");
 const { User } = require("../model/User");
+const { photoUrlfunction } = require("./multiplePhoto");
+const { Photurl } = require("../model/multiplePhoto");
 
 
 
@@ -470,7 +472,82 @@ const ProfileUpdate = async (req, res) => {
     
 }
 
-
+const getphotosByEmailOrPhoneNo = async(req,res) => {
+    try {
+        const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      console.log("...Url...",profileIdentifier)
+        let data;
+    
+        // Check if the identifier is an email or a phone number
+        if (profileIdentifier.includes('@')) {
+          // Assuming it's an email
+          data = await Photurl.findOne({ email: profileIdentifier });
+        } else {
+          // Assuming it's a phone number
+          data = await Photurl.findOne({ phoneno: profileIdentifier });
+        }
+           console.log("...data...",data)
+        if (!data) {
+          return res.status(404).json({ message: 'Profile not found' });
+        }
+        // const getProfile = await ProfileRegister.findOne({email : profileIdentifier})
+    
+        res.status(200).json(data);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    
+}
+const deletephotosByEmailOrPhoneNo = async (req, res) => {
+    try {
+      const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      const photoToDelete = req.body.photoToDelete; // URL of the photo to delete
+      console.log("...Profile Identifier...", profileIdentifier);
+      console.log("...Photo to delete...", photoToDelete);
+  
+      let data;
+  
+      // Check if the identifier is an email or a phone number
+      if (profileIdentifier.includes('@')) {
+        // Assuming it's an email
+        data = await Photurl.findOne({ email: profileIdentifier });
+        console.log("...data found by email...", data);
+      } else {
+        // Assuming it's a phone number
+        data = await Photurl.findOne({ phoneno: profileIdentifier });
+        console.log("...data found by phone number...", data);
+      }
+  
+      if (!data) {
+        return res.status(404).json({ message: 'Profile not found' });
+      }
+  
+      // Log the current photo URLs
+      console.log("...Current photo URLs...", data.photoUrl);
+  
+      // Remove the photo from the photoUrl array
+      const updatedPhotos = data.photoUrl.filter(url => url !== photoToDelete);
+  
+      // Log the updated photo URLs
+      console.log("...Updated photo URLs...", updatedPhotos);
+  
+      if (updatedPhotos.length === data.photoUrl.length) {
+        return res.status(404).json({ message: 'Photo not found in profile' });
+      }
+  
+      // Update the document with the new array
+      data.photoUrl = updatedPhotos;
+      await data.save();
+  
+      res.status(200).json({ message: 'Photo deleted successfully', data });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  
 
 module.exports = {
     profileRegister ,
@@ -480,5 +557,7 @@ module.exports = {
     getprofileById,
     ProfileUpdate,
     getOneprofileById , 
-    getprofileByEmail
+    getprofileByEmail,
+    getphotosByEmailOrPhoneNo ,
+    deletephotosByEmailOrPhoneNo
 };

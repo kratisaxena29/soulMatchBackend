@@ -45,7 +45,9 @@ router.post('/forgot-otp',Register.sendOTPForForgotPassword)
 router.post('/password-reset',Register.otpPasswordChange)
 router.get('/profile/:identifier',profile_register.getprofileById)
 router.get('/oneProfileByEmail/:identifier',profile_register.getprofileByEmail)
+router.get('/getphotosByEmailOrPhoneNo/:identifier',profile_register.getphotosByEmailOrPhoneNo)
 router.get('/profilebyid/:identifier',profile_register.getOneprofileById)
+router.post('/deletephotosByEmailOrPhoneNo/:identifier',profile_register.deletephotosByEmailOrPhoneNo)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
 
 router.post('/upload-multiple-photo/:email', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)
