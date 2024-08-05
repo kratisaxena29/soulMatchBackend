@@ -158,17 +158,17 @@ const getAllProfiles = async (req, res) => {
         //     }
         // }
 
-        if(userProfile.plan === "1")
+        if(userProfile.plan === "100")
         {
             console.log("....under 1")
             limit  = 2
         }
-        else if(userProfile.plan === "2")
+        else if(userProfile.plan === "200")
         {
             console.log("...under 2...")
             limit  = 3
         }
-        else if (userProfile.plan === "3")
+        else if (userProfile.plan === "300")
         {
             console.log("...under 3...")
             limit  = 0
@@ -442,7 +442,33 @@ const ProfileUpdate = async (req, res) => {
     }
   };
   
-
+  const getprofileByEmail = async(req,res) => {
+    try {
+        const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      console.log("...profileIdentifier...",profileIdentifier)
+        let data;
+    
+        // Check if the identifier is an email or a phone number
+        if (profileIdentifier.includes('@')) {
+          // Assuming it's an email
+          data = await ProfileRegister.findOne({ email: profileIdentifier });
+        } else {
+          // Assuming it's a phone number
+          data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+        }
+    
+        if (!data) {
+          return res.status(404).json({ message: 'Profile not found' });
+        }
+        const getProfile = await ProfileRegister.findOne({email : profileIdentifier})
+    
+        res.status(200).json(getProfile);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    
+}
 
 
 
@@ -453,5 +479,6 @@ module.exports = {
     getAlltheProfileId , 
     getprofileById,
     ProfileUpdate,
-    getOneprofileById
+    getOneprofileById , 
+    getprofileByEmail
 };
