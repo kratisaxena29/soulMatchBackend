@@ -1,4 +1,5 @@
 const { response } = require("express");
+const mongoose = require('mongoose');
 const { AllProfiles } = require("../model/AllProfilesId");
 const { ProfileRegister } = require("../model/profile_register");
 const { User } = require("../model/User");
@@ -547,6 +548,29 @@ const deletephotosByEmailOrPhoneNo = async (req, res) => {
     }
   };
   
+ 
+
+  const getphotosById = async (req, res) => {
+    try {
+      const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
+      console.log("...Url...", profileIdentifier);
+      
+      // Ensure the identifier is treated as an ObjectId
+    //   const objectId = mongoose.Types.ObjectId(profileIdentifier);
+      
+      let data = await Photurl.findOne({ id: profileIdentifier });
+      console.log("...data...", data);
+      
+      if (!data) {
+        return res.status(404).json({ message: 'Profile not found' });
+      }
+      
+      res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
   
 
 module.exports = {
@@ -559,5 +583,6 @@ module.exports = {
     getOneprofileById , 
     getprofileByEmail,
     getphotosByEmailOrPhoneNo ,
-    deletephotosByEmailOrPhoneNo
+    deletephotosByEmailOrPhoneNo,
+    getphotosById
 };

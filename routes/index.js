@@ -13,6 +13,7 @@ const upload = multer({ storage });
 const ChatApi = require("../controller/ChatApi")
 const PaymentAPI = require("../controller/Payment")
 const uplaodMultiplePhoto = require("../controller/multiplePhoto")
+const DashboardAPI = require("../controller/DashboardAPi")
 const uploadData = multer({storage})
 // const OpenAI = require("../controller/OpenAi")
 
@@ -46,11 +47,16 @@ router.post('/password-reset',Register.otpPasswordChange)
 router.get('/profile/:identifier',profile_register.getprofileById)
 router.get('/oneProfileByEmail/:identifier',profile_register.getprofileByEmail)
 router.get('/getphotosByEmailOrPhoneNo/:identifier',profile_register.getphotosByEmailOrPhoneNo)
+router.get('/getphotosById/:identifier',profile_register.getphotosById)
 router.get('/profilebyid/:identifier',profile_register.getOneprofileById)
 router.post('/deletephotosByEmailOrPhoneNo/:identifier',profile_register.deletephotosByEmailOrPhoneNo)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
 
 router.post('/upload-multiple-photo/:email', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)
-
+router.get('/getNoOfProfiles',DashboardAPI.getNoOfProfiles)
+router.get('/Today-registration',DashboardAPI.TodayRegistration)
+router.get('/active-subscription',DashboardAPI.activeSubscription)
+router.get('/verify-profile/:id',DashboardAPI.verifyProfile)
+router.delete('/deleteProfile/:id',DashboardAPI.deleteProfile)
 // Export router
 module.exports = router;

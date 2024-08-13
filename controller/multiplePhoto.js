@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 const uuid = require('uuid').v4;
 const {Photurl }= require('../model/multiplePhoto');  // Adjust the path to your actual model file
+const { ProfileRegister } = require('../model/profile_register');
 
 // AWS S3 configuration
 const s3 = new AWS.S3({
@@ -43,16 +44,29 @@ const photoUrlfunction = async (req, res) => {
       const photoUrl = data.Location;
 
       try {
-        // Check if a document with the given email exists
+        // Fetch the id from the ProfileRegister collection
+        let idprofile = await ProfileRegister.findOne({ email });
+        if (!idprofile || !idprofile._id) {
+          console.error('Profile not found for email:', email);
+          return res.status(404).send('Profile not found.');
+        }
+
+        console.log("ProfileRegister ID:", idprofile._id);  // Debugging log
+
         let existingProfile = await Photurl.findOne({ email });
+        console.log("...existingProfile...", existingProfile);
 
         if (existingProfile) {
           // If the document exists, update it by adding the new photoUrl to the array
           existingProfile.photoUrl.push(photoUrl);
           await existingProfile.save();
         } else {
-          // If the document does not exist, create a new one
-          existingProfile = new Photurl({ email, photoUrl: [photoUrl] });
+          // If the document does not exist, create a new one with the id
+          existingProfile = new Photurl({
+            id: idprofile._id,  // Assign the fetched id
+            email,
+            photoUrl: [photoUrl]
+          });
           await existingProfile.save();
         }
 
@@ -70,6 +84,9 @@ const photoUrlfunction = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+
+
 
 
 

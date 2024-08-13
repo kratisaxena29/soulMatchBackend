@@ -68,10 +68,7 @@ gender : {
     type: String,
     required : true
    },
-   address : {
-    type: String,
-    required : false
-   },
+  
    phoneNo : {
     type: Number,
     required : false
@@ -83,6 +80,10 @@ gender : {
    plan : {
     type: String,
     default : null
+   },
+   verifyProfile : {
+    type: Boolean,
+    default : false
    },
    weight : {
     type: String,
@@ -271,10 +272,10 @@ gender : {
         type: String,
         default : null
     },
-
     modifiedAt: {
         type: Date,
-    },
+        default: Date.now, // Set default to current date
+      },
 });
 
 
