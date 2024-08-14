@@ -252,6 +252,10 @@ gender : {
         type: String,
         required : true
     },
+    Part_gender : {
+        type: String,
+        required : true 
+    },
     Part_deit : {
         type: String,
         required : true
