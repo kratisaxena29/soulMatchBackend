@@ -206,6 +206,118 @@ const profileRegister = async (req, res) => {
 //     }
 // };
 
+// const getAllProfiles = async (req, res) => {
+//   try {
+//     const { email, ageRange, religion, caste, subcaste, phoneno } = req.query;
+
+//     let filter = {};
+
+//     if (!email && !phoneno) {
+//       return res.status(400).json({
+//         Error: 'Email or Phone Number is required',
+//         Message: 'You must provide either an email or phone number to fetch profiles',
+//         ErrorCode: 301,
+//       });
+//     }
+
+//     if (email) {
+//       filter.email = { $ne: email };
+//     }
+//     if (phoneno) {
+//       filter.phoneNo = { $ne: phoneno };
+//     }
+
+//     if (ageRange) {
+//       const [minAge, maxAge] = ageRange.split('-').map(Number);
+//       filter.Part_ageFrom = { $gte: minAge, $lte: maxAge };
+//     }
+
+//     if (religion) {
+//       filter.Part_Religion = religion;
+//     }
+
+//     if (caste) {
+//       filter.Part_Caste = caste;
+//     }
+
+//     if (subcaste) {
+//       filter.Part_subCaste = subcaste;
+//     }
+
+//     let userProfile;
+//     if (email) {
+//       userProfile = await ProfileRegister.findOne({ email });
+//     } else if (phoneno) {
+//       userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
+//     }
+
+//     if (!userProfile) {
+//       return res.status(404).json({
+//         Error: 'User Profile not found',
+//         Message: 'No profile found with the provided email or phone number',
+//         ErrorCode: 404,
+//       });
+//     }
+
+//     console.log("User Profile:", userProfile);
+
+//     // Add gender-based filtering
+//     if (userProfile.Part_gender) {
+  
+//       if (userProfile.Part_gender == 'Male') {
+//         filter.gender = "Male";
+      
+//       } else if (userProfile.Part_gender == 'Female') {
+     
+//         filter.gender = "Female";
+       
+//       }
+//       else if(userProfile.Part_gender == 'Other'){
+//         filter.gender = "Other";
+//       }
+//       console.log("Gender filter applied:", filter.gender);
+//     } else {
+//       console.log("Gender not found in user profile");
+//     }
+
+//     console.log("Final Filter applied:", filter);
+
+//     let limit = 0;
+
+//     if (userProfile.plan === "100") {
+//       limit = 2;
+//     } else if (userProfile.plan === "200") {
+//       limit = 3;
+//     } else if (userProfile.plan === "300") {
+//       limit = 0;
+//     } else if (userProfile.plan === null) {
+//       limit = 0;
+//     }
+
+//     let profiles;
+//     if (limit > 0) {
+//       profiles = await ProfileRegister.find(filter).limit(limit);
+//     } else {
+     
+//       profiles = await ProfileRegister.find(filter);
+//     }
+
+//     return res.status(200).json({
+//       response: profiles,
+//       Message: 'Profiles fetched successfully',
+//       ErrorCode: null,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       Error: 'Unable to fetch profiles',
+//       Message: 'Database Issue',
+//       ErrorCode: 308,
+//     });
+//   }
+// };
+
+
 const getAllProfiles = async (req, res) => {
   try {
     const { email, ageRange, religion, caste, subcaste, phoneno } = req.query;
@@ -227,23 +339,6 @@ const getAllProfiles = async (req, res) => {
       filter.phoneNo = { $ne: phoneno };
     }
 
-    if (ageRange) {
-      const [minAge, maxAge] = ageRange.split('-').map(Number);
-      filter.Part_ageFrom = { $gte: minAge, $lte: maxAge };
-    }
-
-    if (religion) {
-      filter.Part_Religion = religion;
-    }
-
-    if (caste) {
-      filter.Part_Caste = caste;
-    }
-
-    if (subcaste) {
-      filter.Part_subCaste = subcaste;
-    }
-
     let userProfile;
     if (email) {
       userProfile = await ProfileRegister.findOne({ email });
@@ -263,25 +358,15 @@ const getAllProfiles = async (req, res) => {
 
     // Add gender-based filtering
     if (userProfile.Part_gender) {
-  
-      if (userProfile.Part_gender == 'Male') {
-        filter.gender = "Male";
-      
-      } else if (userProfile.Part_gender == 'Female') {
-     
-        filter.gender = "Female";
-       
-      }
-      else if(userProfile.Part_gender == 'Other'){
-        filter.gender = "Other";
-      }
+      filter.gender = userProfile.Part_gender;
       console.log("Gender filter applied:", filter.gender);
     } else {
       console.log("Gender not found in user profile");
     }
 
-    console.log("Final Filter applied:", filter);
+    console.log("Initial Filter applied:", filter);
 
+    // Apply limit based on user's plan before filtering
     let limit = 0;
 
     if (userProfile.plan === "100") {
@@ -289,18 +374,37 @@ const getAllProfiles = async (req, res) => {
     } else if (userProfile.plan === "200") {
       limit = 3;
     } else if (userProfile.plan === "300") {
-      limit = 0;
+      limit = 0; // No limit, fetch all
     } else if (userProfile.plan === null) {
-      limit = 0;
+      limit = 0; // No limit, fetch all
     }
 
     let profiles;
     if (limit > 0) {
-      profiles = await ProfileRegister.find(filter).limit(limit);
+      profiles = await ProfileRegister.find(filter).limit(limit); // Apply limit first
     } else {
-     
-      profiles = await ProfileRegister.find(filter);
+      profiles = await ProfileRegister.find(filter); // Fetch all if no limit
     }
+
+    // Now apply additional filtering on the limited profiles
+    profiles = profiles.filter(profile => {
+      if (ageRange) {
+        const [minAge, maxAge] = ageRange.split('-').map(Number);
+        if (profile.Part_ageFrom < minAge || profile.Part_ageFrom > maxAge) {
+          return false;
+        }
+      }
+      if (religion && profile.Part_Religion !== religion) {
+        return false;
+      }
+      if (caste && profile.Part_Caste !== caste) {
+        return false;
+      }
+      if (subcaste && profile.Part_subCaste !== subcaste) {
+        return false;
+      }
+      return true;
+    });
 
     return res.status(200).json({
       response: profiles,
@@ -316,8 +420,6 @@ const getAllProfiles = async (req, res) => {
     });
   }
 };
-
-
 
 
 
