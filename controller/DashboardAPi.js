@@ -111,10 +111,48 @@ const deleteProfile = async (req, res) => {
     }
 };
 
+const getMonthlyUserCount = async (req,res) => {
+    try {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const userCounts = await ProfileRegister.aggregate([
+            {
+                $group: {
+                    _id: {
+                        month: { $month: "$modifiedAt" },
+                        year: { $year: "$modifiedAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { "_id.year": 1, "_id.month": 1 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    month: { $arrayElemAt: [monthNames, { $subtract: ["$_id.month", 1] }] },
+                    year: "$_id.year",
+                    count: 1
+                }
+            }
+        ]);
+
+         userCounts;
+    
+        res.status(200).json( userCounts );
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+
 module.exports = {
     getNoOfProfiles ,
     TodayRegistration ,
     activeSubscription,
     verifyProfile,
-    deleteProfile
+    deleteProfile,
+    getMonthlyUserCount
 }

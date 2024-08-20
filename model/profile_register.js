@@ -6,6 +6,10 @@ profileRegister = new Schema({
         type: String,
         required : false 
     },
+    // userId : {
+    //     type: String,
+    //     required : true   
+    // },
 name : {
     type: String,
     required : true

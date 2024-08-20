@@ -58,5 +58,6 @@ router.get('/Today-registration',DashboardAPI.TodayRegistration)
 router.get('/active-subscription',DashboardAPI.activeSubscription)
 router.get('/verify-profile/:id',DashboardAPI.verifyProfile)
 router.delete('/deleteProfile/:id',DashboardAPI.deleteProfile)
+router.get('/getMonthlyUserCount',DashboardAPI.getMonthlyUserCount)
 // Export router
 module.exports = router;
