@@ -6,10 +6,14 @@ const {IdentificationImage } = require("../model/IdentificationImage")
 
 const s3 = new AWS.S3({
     credentials: {
-        accessKeyId: "AKIAW3MEC3XJGSISPYIW",
-        secretAccessKey: "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",
+        // accessKeyId: "AKIAW3MEC3XJGSISPYIW",
+        // secretAccessKey: "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",
+        accessKeyId: process.env.accessKeyId,
+  secretAccessKey: process.env.secretAccessKey,
+  
     },
-    region: "ap-south-1",
+    // region: "ap-south-1",
+    region: process.env.region
 });
 
 const ImageUpload = async (req, res) => {
@@ -23,7 +27,7 @@ const ImageUpload = async (req, res) => {
         const fileName = `${uuid()}.${fileType}`;
 
         const params = {
-            Bucket: 'bucket-for-profile-picture',
+            Bucket: 'soulmatch-images-upload-bucket',
             Key: fileName,
             Body: req.file.buffer,
             ACL: 'public-read',
@@ -119,7 +123,7 @@ const IdentificationImageUpload = async (req, res) => {
         const fileName = `${uuid()}.${fileType}`;
 
         const params = {
-            Bucket: 'bucket-for-profile-picture',
+            Bucket: 'soulmatch-images-upload-bucket',
             Key: fileName,
             Body: req.file.buffer,
             ACL: 'public-read',
