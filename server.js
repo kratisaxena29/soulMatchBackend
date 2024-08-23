@@ -20,7 +20,7 @@ const { Server } = require('socket.io');
 //     credentials: true
 // }));
 
-const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
+ const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
 app.use(cors({
     origin: allowedOrigins,
     methods: ['GET', 'POST'],
@@ -32,7 +32,7 @@ app.use(cors({
 // }))
 
 // const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
-const MONGODBURI =  'mongodb://admin:Y2wRrSw6kTT0ONt@65.2.173.238:27017/?authSource=admin';
+const MONGODBURI =  'mongodb://admin:Y2wRrSw6kTT0ONt@13.200.211.15:27017/?authSource=admin';
 // const MONGODBURI = 'mongodb://admin:Pdi73vGW@13.200.211.15:27017/?authMechanism=DEFAULT&authSource=soulMatch'
 // const MONGODBURI = process.env.MONGO_URI
 mongoose.connect(MONGODBURI, {
