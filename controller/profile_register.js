@@ -127,12 +127,12 @@ const getAllProfiles = async (req, res) => {
     // Apply limit based on user's plan before filtering
     let limit = 0;
 
-    if (userProfile.plan === "100") {
-      limit = 2;
-    } else if (userProfile.plan === "200") {
-      limit = 3;
-    } else if (userProfile.plan === "300") {
-      limit = 0; // No limit, fetch all
+    if (userProfile.plan === "69900") {
+      limit = 100;
+    } else if (userProfile.plan === "99900") {
+      limit = 150;
+    } else if (userProfile.plan === "139900") {
+      limit = 300; // No limit, fetch all
     } else if (userProfile.plan === null) {
       limit = 0; // No limit, fetch all
     }

@@ -43,12 +43,12 @@ const activeSubscription = async(req,res) => {
     try {
  
         const activesubscription = await ProfileRegister.countDocuments({
-            plan: { $in: [100, 200, 300] }
+            plan: { $in: [69900, 99900, 139900] }
           });
 
-          const plan100Count = await ProfileRegister.countDocuments({ plan: 100 });
-          const plan200Count = await ProfileRegister.countDocuments({ plan: 200 });
-          const plan300Count = await ProfileRegister.countDocuments({ plan: 300 });
+          const plan100Count = await ProfileRegister.countDocuments({ plan: 69900 });
+          const plan200Count = await ProfileRegister.countDocuments({ plan: 99900 });
+          const plan300Count = await ProfileRegister.countDocuments({ plan: 139900 });
 
       res.status(200).json({
         message: 'ActivePlan retrieved successfully',
