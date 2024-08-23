@@ -70,7 +70,7 @@ gender : {
    }],
    drink : {
     type: String,
-    required : true
+    required : false
    },
   
    phoneNo : {
