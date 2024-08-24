@@ -3,12 +3,14 @@ const nodemailer = require("nodemailer");
 const { OtpData } = require("../model/Otp"); // Adjust the path as needed
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  host: "smtp.mail.eu-west-1.awsapps.com",
+  port: 465,
+  secure: true, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: "krati123saxena@gmail.com",
-    pass: "skql dgov ylgu qile",
+    // user: "krati123saxena@gmail.com",
+    // pass: "skql dgov ylgu qile",
+    user : "notifications@soulmatch.co.in",
+    pass : "Notifications@soulmatch"
   },
 });
 
@@ -42,7 +44,7 @@ const sendOTPByEmail = async (req, res) => {
     await otpEntry.save();
 
     const mailOptions = {
-      from: "krati123saxena@gmail.com",
+      from: "notifications@soulmatch.co.in",
       to: email,
       subject: subject,
       text: `Your OTP is ${otp}`,
@@ -69,7 +71,7 @@ const sendWelcomeProfileByEmail = async (req, res) => {
   const {email } = req.body.email
   
     const mailOptions = {
-      from: "krati123saxena@gmail.com",
+      from: "notifications@soulmatch.co.in",
       to: email,
       subject: "Welcome to Soulmatch. ",
       text: `Thank you for registering with us. Please login to start browsing profiles. Happy matchmaking.`,
