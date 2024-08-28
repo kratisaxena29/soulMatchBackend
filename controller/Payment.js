@@ -95,6 +95,65 @@ const newPayment = async (req, res) => {
 };
 
 
+// const checkStatus = async (req, res) => {
+//     console.log("Entering checkStatus function");
+
+//     const merchantTransactionId = req.params.transactionId;
+//     const merchantId = merchant_id;
+
+//     const keyIndex = 1;
+//     const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + salt_key;
+//     console.log("String for Hashing (Status Check):", string);
+
+//     const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+//     console.log("SHA256 Hash (Status Check):", sha256);
+
+//     const checksum = sha256 + "###" + keyIndex;
+//     console.log("Checksum (Status Check):", checksum);
+
+//     const options = {
+//         method: 'GET',
+//         url: `https://api.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+//         headers: {
+//             accept: 'application/json',
+//             'Content-Type': 'application/json',
+//             'X-VERIFY': checksum,
+//             'X-MERCHANT-ID': merchantId
+//         }
+//     };
+
+//     console.log("Request URL (Status Check):", options.url);
+//     console.log("Request Headers (Status Check):", options.headers);
+
+//     const retryCheckStatus = async (retryCount) => {
+//         try {
+//             const response = await axios.request(options);
+//             console.log("Response from Payment Status API:", response.data);
+
+//             if (response.data.success === true && response.data.code === 'PAYMENT_SUCCESS') {
+//                 const url = `https://soulmatch.co.in/payment-success`;
+//                 console.log("Redirecting to:", url);
+//                 return res.redirect(url);
+//             } else if (response.data.code === 'PAYMENT_PENDING' && retryCount < 5) { // Increased retry attempts
+//                 console.log(`Payment is pending. Retrying... Attempt ${retryCount + 1}`);
+//                 setTimeout(() => retryCheckStatus(retryCount + 1), 10000); // Increased delay to 10 seconds
+//             } else {
+//                 const url = `https://soulmatch.co.in/payment-fail`;
+//                 console.log("Redirecting to:", url);
+//                 return res.redirect(url);
+//             }
+//         } catch (error) {
+//             console.error("Error during payment status check:", error);
+//             res.status(500).send({
+//                 message: error.message,
+//                 success: false
+//             });
+//         }
+//     };
+
+//     retryCheckStatus(0); // Start the first check with retry count 0
+// };
+
 const checkStatus = async (req, res) => {
     console.log("Entering checkStatus function");
 
@@ -131,12 +190,24 @@ const checkStatus = async (req, res) => {
             console.log("Response from Payment Status API:", response.data);
 
             if (response.data.success === true && response.data.code === 'PAYMENT_SUCCESS') {
+                // Fetch the user profile based on merchantTransactionId
+                const userProfile = await ProfileRegister.findOne({ transactionId: merchantTransactionId });
+
+                if (userProfile) {
+                    // Update the plan field in userProfile
+                    userProfile.plan = response.data.data.amount; // Assuming the plan amount is stored in the payment response
+                    await userProfile.save();
+                    console.log("User profile updated with new plan.");
+                } else {
+                    console.error("User profile not found.");
+                }
+
                 const url = `https://soulmatch.co.in/payment-success`;
                 console.log("Redirecting to:", url);
                 return res.redirect(url);
-            } else if (response.data.code === 'PAYMENT_PENDING' && retryCount < 5) { // Increased retry attempts
+            } else if (response.data.code === 'PAYMENT_PENDING' && retryCount < 5) {
                 console.log(`Payment is pending. Retrying... Attempt ${retryCount + 1}`);
-                setTimeout(() => retryCheckStatus(retryCount + 1), 10000); // Increased delay to 10 seconds
+                setTimeout(() => retryCheckStatus(retryCount + 1), 10000);
             } else {
                 const url = `https://soulmatch.co.in/payment-fail`;
                 console.log("Redirecting to:", url);
