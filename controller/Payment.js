@@ -23,22 +23,22 @@ const newPayment = async (req, res) => {
       }
 
       // Fetch the user profile based on email or phoneno
-      let userProfile;
-      if (email) {
-          userProfile = await ProfileRegister.findOne({ email });
-      } else if ("+919871627742") {
+    //   let userProfile;
+    //   if (email) {
+    //       userProfile = await ProfileRegister.findOne({ email });
+    //   } else if ("+919871627742") {
 
-          userProfile = await ProfileRegister.findOne({ phoneNo: "+919871627742" });
-      }
+    //       userProfile = await ProfileRegister.findOne({ phoneNo: "+919871627742" });
+    //   }
 
       // Check if user profile is found
-      if (!userProfile) {
-          return res.status(404).json({
-              message: 'User Profile not found',
-              success: false,
-              errorCode: 404,
-          });
-      }
+    //   if (!userProfile) {
+    //       return res.status(404).json({
+    //           message: 'User Profile not found',
+    //           success: false,
+    //           errorCode: 404,
+    //       });
+    //   }
 
       const merchantTransactionId = transactionId;
       const data = {
