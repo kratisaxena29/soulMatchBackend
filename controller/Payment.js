@@ -13,6 +13,7 @@ const newPayment = async (req, res) => {
   try {
       const { email, phoneno, transactionId, MUID, amount } = req.body;
           console.log("...req.body...",req.body)
+           res.status(201).json( req.body );
       // Check if either email or phoneno is provided
       if (!email && !phoneno) {
           return res.status(400).json({
