@@ -24,12 +24,12 @@ const newPayment = async (req, res) => {
 
       // Fetch the user profile based on email or phoneno
       let userProfile;
-    //   if (email) {
-    //       userProfile = await ProfileRegister.findOne({ email });
-    //   } else if ("+919871627742") {
+      if (req.body.email) {
+          userProfile = await ProfileRegister.findOne({ email : req.body.email });
+      } else if (req.body.phoneno) {
 
-          userProfile = await ProfileRegister.findOne({ phoneNo: "+919871627742" });
-    //   }
+          userProfile = await ProfileRegister.findOne({ phoneNo: req.body.phoneno });
+      }
 
       // Check if user profile is found
       if (!userProfile) {
