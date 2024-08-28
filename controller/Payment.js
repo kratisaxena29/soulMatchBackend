@@ -13,7 +13,7 @@ const newPayment = async (req, res) => {
   try {
       const { email, phoneno, transactionId, MUID, amount } = req.body;
           console.log("...req.body...",req.body)
-           res.status(201).json( req.body );
+        //    res.status(201).json( req.body );
       // Check if either email or phoneno is provided
       if (!email && !phoneno) {
           return res.status(400).json({
@@ -25,11 +25,12 @@ const newPayment = async (req, res) => {
 
       // Fetch the user profile based on email or phoneno
       let userProfile;
-      if (req.body.email) {
-          userProfile = await ProfileRegister.findOne({ email : req.body.email });
-      } else if (req.body.phoneno) {
-
-          userProfile = await ProfileRegister.findOne({ phoneNo: req.body.phoneno });
+      if (email !== "Not Available") {
+        console.log("..email.")
+          userProfile = await ProfileRegister.findOne({ email :email });
+      } else if (phoneno !== "Not Available") {
+console.log("..phone")
+          userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
       }
 
       // Check if user profile is found
