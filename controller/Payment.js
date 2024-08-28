@@ -27,7 +27,8 @@ const newPayment = async (req, res) => {
       if (email) {
           userProfile = await ProfileRegister.findOne({ email });
       } else if (phoneno) {
-          userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
+
+          userProfile = await ProfileRegister.findOne({ phoneNo: `+${phoneno}` });
       }
 
       // Check if user profile is found
