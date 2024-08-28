@@ -440,7 +440,7 @@ const getprofileByEmail = async (req, res) => {
       return res.status(404).json({ message: 'Profile not found' });
     }
     // const getProfile = await ProfileRegister.findOne({ email: profileIdentifier })
-
+console.log("... Krati...data...",data )
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

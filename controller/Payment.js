@@ -78,7 +78,9 @@ const newPayment = async (req, res) => {
           console.log(response.data);
           const redirectUrl = response.data.data.instrumentResponse.redirectInfo.url;
           console.log("...response...", redirectUrl);
-          userProfile.plan = amount;
+          userProfile.transactionId = transactionId
+
+        //   userProfile.plan = amount;
           await userProfile.save();
           return res.status(200).json({ url: redirectUrl });
       })

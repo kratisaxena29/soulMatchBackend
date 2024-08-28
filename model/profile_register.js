@@ -85,6 +85,10 @@ gender : {
     type: String,
     default : null
    },
+   transactionId : {
+    type: String,
+    default : null
+   },
    verifyProfile : {
     type: Boolean,
     default : false
