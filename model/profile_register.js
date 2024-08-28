@@ -74,7 +74,7 @@ gender : {
    },
   
    phoneNo : {
-    type: Number,
+    type: String,
     required : false
    },
    aboutYourSelf : {

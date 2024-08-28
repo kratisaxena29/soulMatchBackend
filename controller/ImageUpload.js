@@ -47,7 +47,9 @@ const ImageUpload = async (req, res) => {
             }
 
             // Create the query object to find the profile
-            const query = email ? { email: email } : { phoneNo: phoneno };
+            // const formatedphoneno = `+${phoneno.trim()}`
+            console.log()
+            const query = email ? { email: email } : { phoneNo: `+${phoneno.trim()}` };
 console.log("..query...",query)
             // Update the profile with the URL of the uploaded image
             const profile = await ProfileRegister.findOneAndUpdate(
@@ -79,7 +81,8 @@ console.log("..query...",query)
                 { upsert: true, new: true }
             );
 
-            console.log("File uploaded successfully:", data);
+            // console.log("File uploaded successfully:", data);
+            console.log("...imageupload...",imageUpload)
             res.status(200).send(profile);
         });
 
@@ -94,8 +97,19 @@ console.log("..query...",query)
 
 const getprofileByemail = async (req,res) => {
     try {
-        const {email } = req.query 
-        const data = await ImageUploadURL.find({email : email })
+        const dataidentifier = req.params.identifier 
+        let value 
+        let data
+        if(dataidentifier.includes('@')){
+            value  = req.params.identifier
+             data = await ImageUploadURL.find({email : value })
+        }else{
+            value  = req.params.identifier 
+            data = await ImageUploadURL.find({phoneNo: value })
+        }
+
+        // console.log("...dataparams",dataidentifier)
+       
         
         return res.status(200).json({
             response: data[0],

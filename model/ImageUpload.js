@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const imageUploadSchema = new Schema({
     email: {
         type: String,
-        required: true
+        required: false
+    },
+    phoneNo: {
+        type: String,
+        required: false
     },
     imageUrl: {
         type: String,

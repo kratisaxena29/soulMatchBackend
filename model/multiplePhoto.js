@@ -9,8 +9,12 @@ photurl = new Schema({
     },
     email: {
         type: String,
-        required: true,
+        required: false,
       
+    },
+    phoneNo : {
+        type: String,
+        required: false,  
     },
      photoUrl : [{
         type: String,

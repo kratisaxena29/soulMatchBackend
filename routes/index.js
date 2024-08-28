@@ -33,7 +33,7 @@ router.post('/login',Register.UserLogin)
 router.get('/getAllprofile',profile_register.getAllProfiles) 
 router.post('/upload', upload.single('image'), ImageUploader.ImageUpload);
 router.post('/upload-dp', upload.single('imagedp'), dpUploader.dpUpload);
-router.get('/getimagepath',ImageUploader.getprofileByemail)
+router.get('/getimagepath/:identifier',ImageUploader.getprofileByemail)
 router.post('/allProfileId',profile_register.pushAllTheprofilesId)
 router.get('/getallProfileById',profile_register.getAlltheProfileId)
 router.post('/conversation',ChatApi.createConversation)
@@ -52,7 +52,7 @@ router.get('/profilebyid/:identifier',profile_register.getOneprofileById)
 router.post('/deletephotosByEmailOrPhoneNo/:identifier',profile_register.deletephotosByEmailOrPhoneNo)
 // router.post('/generate-about-us', OpenAI.generate_AboutUs);
 
-router.post('/upload-multiple-photo/:email', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)
+router.post('/upload-multiple-photo/:identifier', uploadData.single('file'),uplaodMultiplePhoto.photoUrlfunction)
 router.get('/getNoOfProfiles',DashboardAPI.getNoOfProfiles)
 router.get('/Today-registration',DashboardAPI.TodayRegistration)
 router.get('/active-subscription',DashboardAPI.activeSubscription)

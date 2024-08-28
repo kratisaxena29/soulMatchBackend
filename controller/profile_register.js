@@ -81,7 +81,7 @@ const getAllProfiles = async (req, res) => {
     const { email, ageRange, religion, caste, subcaste, phoneno } = req.query;
 
     let filter = {};
-
+console.log("...phoneNo...",phoneno)
     if (!email && !phoneno) {
       return res.status(400).json({
         Error: 'Email or Phone Number is required',
@@ -97,11 +97,14 @@ const getAllProfiles = async (req, res) => {
       filter.phoneNo = { $ne: phoneno };
     }
 
+let formattedPhoneNo
+console.log("..+${phoneno}...", formattedPhoneNo);
     let userProfile;
     if (email) {
       userProfile = await ProfileRegister.findOne({ email });
     } else if (phoneno) {
-      userProfile = await ProfileRegister.findOne({ phoneNo: phoneno });
+      formattedPhoneNo = `+${phoneno.trim()}`;
+      userProfile = await ProfileRegister.findOne({ phoneNo: formattedPhoneNo });
     }
 
     if (!userProfile) {
@@ -364,7 +367,7 @@ const getOneprofileById = async (req, res) => {
       data = await ProfileRegister.findOne({ email: profileIdentifier });
     } else {
       // Assuming it's a phone number
-      data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+      data = await ProfileRegister.findOne({ phoneNo: profileIdentifier });
     }
 
     if (!data) {
@@ -395,8 +398,8 @@ const ProfileUpdate = async (req, res) => {
     console.log("...updateData...", updateData);
 
     // Determine if the identifier is an email or phone number
-    const identifierField = profileIdentifier.includes('@') ? 'email' : 'phone';
-
+    const identifierField = profileIdentifier.includes('@') ? 'email' : 'phoneNo';
+console.log("...identifier...",identifierField)
     // Find the profile and update the fields
     const updatedProfile = await ProfileRegister.findOneAndUpdate(
       { [identifierField]: profileIdentifier },
@@ -421,7 +424,7 @@ const ProfileUpdate = async (req, res) => {
 const getprofileByEmail = async (req, res) => {
   try {
     const profileIdentifier = req.params.identifier; // Use a generic identifier instead of email
-    console.log("...profileIdentifier...", profileIdentifier)
+    console.log("...profileIdentifier krati...", profileIdentifier)
     let data;
 
     // Check if the identifier is an email or a phone number
@@ -430,15 +433,15 @@ const getprofileByEmail = async (req, res) => {
       data = await ProfileRegister.findOne({ email: profileIdentifier });
     } else {
       // Assuming it's a phone number
-      data = await ProfileRegister.findOne({ phoneno: profileIdentifier });
+      data = await ProfileRegister.findOne({ phoneNo: profileIdentifier });
     }
 
     if (!data) {
       return res.status(404).json({ message: 'Profile not found' });
     }
-    const getProfile = await ProfileRegister.findOne({ email: profileIdentifier })
+    // const getProfile = await ProfileRegister.findOne({ email: profileIdentifier })
 
-    res.status(200).json(getProfile);
+    res.status(200).json(data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -458,7 +461,7 @@ const getphotosByEmailOrPhoneNo = async (req, res) => {
       data = await Photurl.findOne({ email: profileIdentifier });
     } else {
       // Assuming it's a phone number
-      data = await Photurl.findOne({ phoneno: profileIdentifier });
+      data = await Photurl.findOne({ phoneNo: profileIdentifier });
     }
     console.log("...data...", data)
     if (!data) {
@@ -489,7 +492,7 @@ const deletephotosByEmailOrPhoneNo = async (req, res) => {
       console.log("...data found by email...", data);
     } else {
       // Assuming it's a phone number
-      data = await Photurl.findOne({ phoneno: profileIdentifier });
+      data = await Photurl.findOne({ phoneNo: profileIdentifier });
       console.log("...data found by phone number...", data);
     }
 

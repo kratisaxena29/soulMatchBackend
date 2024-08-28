@@ -13,6 +13,7 @@ const UserRegister = async (req, res) => {
         let userBody = req.body;
         console.log("Received user body:", userBody);
 
+        let formattedPhoneNo;
         // Check if neither email nor phone number is provided
         if (!userBody.email && !userBody.phoneno) {
             return res.status(400).json({
@@ -37,9 +38,17 @@ const UserRegister = async (req, res) => {
 
         // Check if the phone number is already registered
         if (userBody.phoneno) {
-            const existingPhoneNo = await User.findOne({ phoneno: userBody.phoneno });
+            // Ensure phoneno is a string
+            const phoneNoStr = String(userBody.phoneno);
+            
+            // Add +91 prefix if not already present
+             formattedPhoneNo = phoneNoStr.startsWith('+91') ? phoneNoStr : `+91${phoneNoStr}`;
+            console.log("Formatted Phone Number for checking:", formattedPhoneNo);
+        
+            // Check if phone number already exists
+            const existingPhoneNo = await User.findOne({ phoneno: formattedPhoneNo });
             if (existingPhoneNo) {
-                console.log("Phone number already registered:", userBody.phoneno);
+                console.log("Phone number already registered:", formattedPhoneNo);
                 return res.status(400).json({
                     Error: 'Phone Number already registered',
                     Message: 'The provided number is already in use',
@@ -47,6 +56,8 @@ const UserRegister = async (req, res) => {
                 });
             }
         }
+        
+
 
         // Encrypt the password
         let pass = await encrypt(userBody.password);
@@ -59,7 +70,7 @@ const UserRegister = async (req, res) => {
             password: pass,
             profileVerified: userBody.profileVerified,
             Verified: userBody.Verified,
-            phoneno: userBody.phoneno || undefined // Include phone number only if it exists
+            phoneno: formattedPhoneNo || undefined // Include phone number only if it exists
         });
         console.log("UserData instance created:", userData);
 
@@ -94,17 +105,22 @@ const UserLogin = async (req, res) => {
         const { email, phoneno, password } = req.body;
         console.log("Login attempt for:", email || phoneno);
 
+        let formattedPhoneNo;
+        if (phoneno) {
+            formattedPhoneNo = `+91${phoneno}`;
+            console.log("Formatted Phone Number:", formattedPhoneNo);
+        }
         // Find the user by email or phone number based on which one is provided
         let user;
         if (email) {
             user = await User.findOne({ email });
         } else if (phoneno) {
-            user = await User.findOne({ phoneno });
+            user = await User.findOne({ phoneno : formattedPhoneNo });
         }
 
         console.log("...user..", user);
         if (!user) {
-            console.log("User not found:", email || phoneno);
+            console.log("User not found:", email || formattedPhoneNo);
             return res.status(400).json({
                 Error: 'User not found',
                 Message: 'The provided email or phone number does not exist',
@@ -123,7 +139,7 @@ const UserLogin = async (req, res) => {
 
         // Check if profile is verified
         if (!user.profileVerified) {
-            console.log("Profile not verified for user:", email || phoneno);
+            console.log("Profile not verified for user:", email || formattedPhoneNo);
             return res.status(400).json({
                 Error: 'Profile not verified',
                 Message: 'The profile has not been verified',
@@ -133,7 +149,7 @@ const UserLogin = async (req, res) => {
 
         // Check if the password is not null or undefined
         if (!user.password) {
-            console.log("User password is null or undefined:", email || phoneno);
+            console.log("User password is null or undefined:", email || formattedPhoneNo);
             return res.status(400).json({
                 Error: 'Invalid credentials',
                 Message: 'The user password is missing or invalid',
@@ -144,7 +160,7 @@ const UserLogin = async (req, res) => {
         // Decrypt and compare the password
         const decryptedPassword = await decrypt(user.password);
         if (decryptedPassword !== password) {
-            console.log("Invalid password for:", email || phoneno);
+            console.log("Invalid password for:", email || formattedPhoneNo);
             return res.status(400).json({
                 Error: 'Invalid credentials',
                 Message: 'The provided password is incorrect',
@@ -165,19 +181,19 @@ const UserLogin = async (req, res) => {
             console.log("...email...",email)
             fromProfile = await ProfileRegister.findOne({ email: user.email });
             console.log("...email...",fromProfile)
-        } else if (phoneno) {
-            console.log("...phoneno...",phoneno)
-            console.log("Type of phoneno:", typeof phoneno);
-             console.log("...user.phoneno...",typeof user.phoneno)
-             console.log("...user phone number ...",typeof Number(user.phoneno))
-             const number = Number(user.phoneno)
+        } else if (formattedPhoneNo) {
+            console.log("...phoneno...",formattedPhoneNo)
+            console.log("Type of phoneno:", typeof formattedPhoneNo);
+             console.log("...user.phoneno...",typeof user.formattedPhoneNo)
+             console.log("...user phone number ...",typeof Number(user.formattedPhoneNo))
+             const number = Number(user.formattedPhoneNo)
             //  fromProfile = await ProfileRegister.find()
-            fromProfile = await ProfileRegister.findOne({ phoneNo: number});
+            fromProfile = await ProfileRegister.findOne({ phoneNo: formattedPhoneNo});
             console.log("...phoneno...",fromProfile)
         }
           console.log("...fromProfile...",fromProfile)
         if (!fromProfile) {
-            console.log("Profile not found for user:", email || phoneno);
+            console.log("Profile not found for user:", email || formattedPhoneNo);
             return res.status(400).json({
                 Error: 'Profile not found',
                 Message: 'The user profile does not exist',
@@ -185,9 +201,9 @@ const UserLogin = async (req, res) => {
             });
         }
 
-        console.log("....fromprofile...", fromProfile , fromProfile.phoneno , );
-        console.log("Login successful for:", email || phoneno );
-
+        console.log("....fromprofile...", fromProfile , fromProfile.formattedPhoneNo , );
+        console.log("Login successful for:", email || formattedPhoneNo );
+console.log("...fromProfile...",fromProfile)
         // Send success response
         res.status(200).json({
             response: {
@@ -196,8 +212,8 @@ const UserLogin = async (req, res) => {
                     id: fromProfile._id,
                     firstName: fromProfile.name,
                     lastName: user.lastName,
-                    email: email ? fromProfile.email : undefined,
-                    phoneno: phoneno ? fromProfile.phoneNo : undefined,
+                    email: fromProfile.email ? fromProfile.email : undefined,
+                    phoneno: fromProfile.phoneNo ? fromProfile.phoneNo : undefined,
                 },
             },
             Message: 'Login successful',

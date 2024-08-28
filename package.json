@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.637.0",
     "aws-sdk": "^2.1664.0",
     "axios": "^1.7.2",
     "axios-retry": "^4.4.1",

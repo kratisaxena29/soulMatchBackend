@@ -25,7 +25,7 @@ const photoUrlfunction = async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  const email = req.params.email;
+  const identifier = req.params.identifier;
 
   try {
     const myFile = req.file.originalname.split('.');
@@ -49,18 +49,25 @@ const photoUrlfunction = async (req, res) => {
       const photoUrl = data.Location;
 
       try {
+        // Construct query based on identifier type (email or phone number)
+        let query = {};
+        if (identifier.includes('@')) {
+          query.email = identifier;
+        } else {
+          query.phoneNo = identifier;
+        }
+
         // Fetch the id from the ProfileRegister collection
-        let idprofile = await ProfileRegister.findOne({ email });
+        let idprofile = await ProfileRegister.findOne(query);
         if (!idprofile || !idprofile._id) {
-          console.error('Profile not found for email:', email);
+          console.error('Profile not found for identifier:', identifier);
           return res.status(404).send('Profile not found.');
         }
 
-        console.log("ProfileRegister ID:", idprofile._id);  // Debugging log
+        console.log("ProfileRegister ID:", idprofile._id);
 
-        let existingProfile = await Photurl.findOne({ email });
-        console.log("...existingProfile...", existingProfile);
-
+        // Find existing Photurl document or create a new one
+        let existingProfile = await Photurl.findOne(query);
         if (existingProfile) {
           // If the document exists, update it by adding the new photoUrl to the array
           existingProfile.photoUrl.push(photoUrl);
@@ -68,9 +75,11 @@ const photoUrlfunction = async (req, res) => {
         } else {
           // If the document does not exist, create a new one with the id
           existingProfile = new Photurl({
-            id: idprofile._id,  // Assign the fetched id
-            email,
-            photoUrl: [photoUrl]
+            id: idprofile._id,
+            email: idprofile.email || '', // Save email if available
+            phoneNo: idprofile.phoneNo || '', // Save phone number if available
+            photoUrl: [photoUrl],
+            modifiedAt: new Date(),
           });
           await existingProfile.save();
         }
@@ -89,6 +98,8 @@ const photoUrlfunction = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+
 
 
 
