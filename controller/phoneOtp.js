@@ -232,7 +232,7 @@ const sendOTPByPhone = async (req, res) => {
 
     // Prepare SNS publish parameters
     const params = {
-      Message: `Your OTP code is ${otp}`,
+      Message: `(SoulMatch) Use OTP for authentication , OTP code is ${otp}`,
       TopicArn: topicArn,
       MessageAttributes: {
         'AWS.SNS.SMS.SMSType': {

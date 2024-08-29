@@ -203,7 +203,7 @@ const UserLogin = async (req, res) => {
 
         console.log("....fromprofile...", fromProfile , fromProfile.formattedPhoneNo , );
         console.log("Login successful for:", email || formattedPhoneNo );
-console.log("...fromProfile...",fromProfile)
+         console.log("...fromProfile...",fromProfile)
         // Send success response
         res.status(200).json({
             response: {
