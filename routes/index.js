@@ -35,6 +35,9 @@ router.post('/upload', upload.single('image'), ImageUploader.ImageUpload);
 router.post('/upload-dp', upload.single('imagedp'), dpUploader.dpUpload);
 router.get('/getimagepath/:identifier',ImageUploader.getprofileByemail)
 router.post('/allProfileId',profile_register.pushAllTheprofilesId)
+router.post('/AlltheSendRequestId',profile_register.pushAllTheSendId)
+router.get('/getAllRequestById/:id',profile_register.getAllRequestById)
+router.get('/deleteRequestById',profile_register.deleteRequestById)
 router.get('/getallProfileById',profile_register.getAlltheProfileId)
 router.post('/conversation',ChatApi.createConversation)
 router.get('/conversation/:userId',ChatApi.getconversationByuserId)

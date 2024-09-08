@@ -1,11 +1,12 @@
 const { response } = require("express");
 const mongoose = require('mongoose');
 const { AllProfiles } = require("../model/AllProfilesId");
+const { AllSendRequest } = require("../model/AllSendRequest");
 const { ProfileRegister } = require("../model/profile_register");
 const { User } = require("../model/User");
 const { photoUrlfunction } = require("./multiplePhoto");
 const { Photurl } = require("../model/multiplePhoto");
-
+const { ObjectId } = mongoose.Types; 
 
 
 const profileRegister = async (req, res) => {
@@ -220,6 +221,12 @@ const pushAllTheprofilesId = async (req, res) => {
     const profileQuery = iddata.email ? { email: iddata.email } : { phoneno: iddata.phoneno };
     let existingProfile = await AllProfiles.findOne(profileQuery);
     console.log("...existingProfile...", existingProfile)
+
+    // If AllprofilesId is not an array, wrap it in an array
+    if (!Array.isArray(iddata.AllprofilesId)) {
+      iddata.AllprofilesId = [iddata.AllprofilesId];
+    }
+
     if (existingProfile) {
       // Push the new AllprofilesId into the existing array
       console.log("...idData..", iddata);
@@ -270,10 +277,12 @@ const pushAllTheprofilesId = async (req, res) => {
 };
 
 
+
 const getAlltheProfileId = async (req, res) => {
   const { email, phoneno } = req.query;
   console.log("..email...", email);
   console.log("..phoneno...", phoneno);
+  console.log("....krati....")
 
   try {
     // Check if either email or phoneno is provided
@@ -286,7 +295,7 @@ const getAlltheProfileId = async (req, res) => {
     }
 
     // Create the match query object
-    const matchQuery = email ? { email: email } : { phoneno: phoneno };
+    const matchQuery = email ? { email: email } : { phoneno: `+${phoneno.trim()}` };
     console.log("..matchQuery...", matchQuery);
 
     // Aggregate query to find the main profile and lookup profile details
@@ -549,7 +558,177 @@ const getphotosById = async (req, res) => {
 };
 
 
+
+const pushAllTheSendId = async (req, res) => {
+  let iddata = req.body;
+
+  console.log("...idData...");
+
+  if (!iddata.email && !iddata.phoneno) {
+    return res.status(400).json({
+      response: null,
+      Message: "Email or Phone number is required",
+      ErrorCode: 400,
+    });
+  }
+
+  try {
+    const query = iddata.email ? { email: iddata.email } : { phoneNo: iddata.phoneno };
+    console.log("...query...",query)
+    const profileFind = await ProfileRegister.findOne(query);
+
+    if (!profileFind) {
+      return res.status(400).json({
+        response: null,
+        Message: "Profile does not match",
+        ErrorCode: 404,
+      });
+    }
+
+    iddata.profileId = profileFind._id;
+
+    const profileQuery = iddata.email ? { email: iddata.email } : { phoneno: iddata.phoneno };
+    let existingProfile = await AllSendRequest.findOne(profileQuery);
+console.log("..existingProfile..",existingProfile)
+    if (existingProfile) {
+      existingProfile = await AllSendRequest.findOneAndUpdate(
+        profileQuery,
+        { $addToSet: { AllprofilesId: { $each: iddata.AllprofilesId } }, $set: { profileId: iddata.profileId } },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        response: {
+          email: iddata.email,
+          phoneno: iddata.phoneno,
+          profileId: profileFind._id,
+          AllprofilesId: existingProfile._id,
+        },
+        Message: 'Profile ID updated',
+        ErrorCode: null,
+      });
+    } else {
+      const data = new AllSendRequest(iddata);
+      console.log("...data...",data)
+      await data.save();
+
+      return res.status(200).json({
+        response: {
+          email: iddata.email,
+          phoneno: iddata.phoneno,
+          profileId: profileFind._id,
+          AllprofilesId: data._id,
+        },
+        Message: 'Profile ID saved',
+        ErrorCode: null,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      Error: 'Details not saved',
+      Message: 'Database issue',
+      ErrorCode: 308,
+    });
+  }
+};
+
+const getAllRequestById = async (req, res) => {
+  const { id } = req.params; // Get the id from params
+
+  try {
+    console.log("..id...", id);
+
+    // Find all documents where the provided `id` is in the `AllprofilesId` array
+    const requests = await AllSendRequest.find({
+      AllprofilesId: { $in: [new ObjectId(id)] }
+    });
+
+    console.log("...requests...", requests);
+
+    // If no matching documents are found
+    if (requests.length === 0) {
+      return res.status(404).json({
+        message: 'No profiles found with the given id in AllprofilesId',
+        data: null
+      });
+    }
+
+    const profileIds = requests.map((request) => request.profileId);
+    console.log("...profileIds...",profileIds)
+    const profiles = await ProfileRegister.find({
+      _id: { $in: profileIds }},
+      { name: 1, fileUpload: 1 }
+    );
+
+    console.log("...profiles...", profiles);
+
+    res.status(200).json({
+      message: 'Profiles fetched successfully',
+      data: profiles // Return all matching documents
+    });
+  } catch (err) {
+    console.error("Error fetching requests:", err);
+    res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
+};
+
+const deleteRequestById = async (req, res) => {
+  const { id, requestId } = req.query; // Get `id` and `requestId` from query parameters
+// id means addi ki profile
+// requestId - nupur ki profile id 
+  try {
+    console.log("..profileId...", id);
+    console.log("..requestId...", requestId);
+
+    // Find the document that matches the provided `profileId`
+    const requests = await AllSendRequest.findOne({
+      profileId: requestId
+    });
+
+    console.log("...requests...", requests);
+
+    // If no matching document is found
+    if (!requests) {
+      return res.status(404).json({
+        message: 'No profiles found with the given profileId',
+        data: null
+      });
+    }
+
+    // Check if the requestId is in the AllprofilesId array
+    const index = requests.AllprofilesId.indexOf(id);
+    if (index === -1) {
+      return res.status(404).json({
+        message: 'requestId not found in AllprofilesId',
+        data: null
+      });
+    }
+
+    // Remove the requestId from the AllprofilesId array
+    requests.AllprofilesId.splice(index, 1);
+
+    // Save the updated document
+    await requests.save();
+
+    res.status(200).json({
+      message: 'Request deleted successfully',
+      data: requests
+    });
+  } catch (err) {
+    console.error("Error processing request:", err);
+    res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
+};
+
+
+
 module.exports = {
+  pushAllTheSendId,
   profileRegister,
   getAllProfiles,
   pushAllTheprofilesId,
@@ -560,5 +739,7 @@ module.exports = {
   getprofileByEmail,
   getphotosByEmailOrPhoneNo,
   deletephotosByEmailOrPhoneNo,
-  getphotosById
+  getphotosById,
+  getAllRequestById,
+  deleteRequestById
 };
