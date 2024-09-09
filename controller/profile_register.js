@@ -6,6 +6,7 @@ const { ProfileRegister } = require("../model/profile_register");
 const { User } = require("../model/User");
 const { photoUrlfunction } = require("./multiplePhoto");
 const { Photurl } = require("../model/multiplePhoto");
+const { DeleteRequest } = require('../model/DeleteRequest');
 const { ObjectId } = mongoose.Types; 
 
 
@@ -665,6 +666,7 @@ const getAllRequestById = async (req, res) => {
 
     res.status(200).json({
       message: 'Profiles fetched successfully',
+      counts : profiles.length,
       data: profiles // Return all matching documents
     });
   } catch (err) {
@@ -675,10 +677,125 @@ const getAllRequestById = async (req, res) => {
   }
 };
 
+// const deleteRequestById = async (req, res) => {
+//   const { id, requestId } = req.query; // Get `id` and `requestId` from query parameters
+// // id means addi ki profile
+// // requestId - nupur ki profile id 
+//   try {
+//     console.log("..profileId...", id);
+//     console.log("..requestId...", requestId);
+
+//     // Find the document that matches the provided `profileId`
+//     const requests = await AllSendRequest.findOne({
+//       profileId: requestId
+//     });
+
+//     console.log("...requests...", requests);
+
+//     // If no matching document is found
+//     if (!requests) {
+//       return res.status(404).json({
+//         message: 'No profiles found with the given profileId',
+//         data: null
+//       });
+//     }
+
+//     // Check if the requestId is in the AllprofilesId array
+//     const index = requests.AllprofilesId.indexOf(id);
+//     if (index === -1) {
+//       return res.status(404).json({
+//         message: 'requestId not found in AllprofilesId',
+//         data: null
+//       });
+//     }
+
+//     // Remove the requestId from the AllprofilesId array
+//     requests.AllprofilesId.splice(index, 1);
+
+//     // Save the updated document
+//     await requests.save();
+//     let deleteRequest = await DeleteRequest.findOne({
+//       profileId: id, // 'id' should be saved in the `profileId` field
+//     });
+
+//     // If no document is found, create a new one
+//     if (!deleteRequest) {
+//       deleteRequest = new DeleteRequest({
+//         profileId: id,
+//         AllprofilesId: [requestId], // Initialize AllprofilesId array with the requestId
+//         modifiedAt: new Date(),
+//       });
+//     } else {
+//       // If the document already exists, update it
+//       // Check if the requestId is already in the AllprofilesId array
+//       if (!deleteRequest.AllprofilesId.includes(requestId)) {
+//         deleteRequest.AllprofilesId.push(requestId); // Add requestId if it doesn't exist
+//       }
+//       deleteRequest.modifiedAt = new Date(); // Update the modifiedAt field
+//     }
+// console.log("....delete requests...",requests)
+//     res.status(200).json({
+//       message: 'Request deleted successfully',
+//       data: requests
+//     });
+//   } catch (err) {
+//     console.error("Error processing request:", err);
+//     res.status(500).json({
+//       message: 'Internal server error',
+//     });
+//   }
+// };
+
+
+
+
+// const deleteRequestById = async (req, res) => {
+//   const { id, requestId } = req.query; // Get `id` and `requestId` from query parameters
+//   try {
+//     console.log("..profileId...", id);
+//     console.log("..requestId...", requestId);
+
+//     // Check if a request already exists with the provided `profileId`
+//     let deleteRequest = await DeleteRequest.findOne({
+//       profileId: id, // 'id' should be saved in the `profileId` field
+//     });
+
+//     // If no document is found, create a new one
+//     if (!deleteRequest) {
+//       deleteRequest = new DeleteRequest({
+//         profileId: id,
+//         AllprofilesId: [requestId], // Initialize AllprofilesId array with the requestId
+//         modifiedAt: new Date(),
+//       });
+//     } else {
+//       // If the document already exists, update it
+//       // Check if the requestId is already in the AllprofilesId array
+//       if (!deleteRequest.AllprofilesId.includes(requestId)) {
+//         deleteRequest.AllprofilesId.push(requestId); // Add requestId if it doesn't exist
+//       }
+//       deleteRequest.modifiedAt = new Date(); // Update the modifiedAt field
+//     }
+
+//     // Save the document
+//     await deleteRequest.save();
+
+//     console.log("....saved delete request...", deleteRequest);
+//     res.status(200).json({
+//       message: 'Request saved successfully',
+//       data: deleteRequest,
+//     });
+//   } catch (err) {
+//     console.error("Error processing request:", err);
+//     res.status(500).json({
+//       message: 'Internal server error',
+//     });
+//   }
+// };
+
 const deleteRequestById = async (req, res) => {
   const { id, requestId } = req.query; // Get `id` and `requestId` from query parameters
-// id means addi ki profile
-// requestId - nupur ki profile id 
+  // id means addi ki profile
+  // requestId - nupur ki profile id 
   try {
     console.log("..profileId...", id);
     console.log("..requestId...", requestId);
@@ -698,24 +815,52 @@ const deleteRequestById = async (req, res) => {
       });
     }
 
-    // Check if the requestId is in the AllprofilesId array
+    // Check if the `id` is in the AllprofilesId array
     const index = requests.AllprofilesId.indexOf(id);
     if (index === -1) {
       return res.status(404).json({
-        message: 'requestId not found in AllprofilesId',
+        message: 'id not found in AllprofilesId',
         data: null
       });
     }
 
-    // Remove the requestId from the AllprofilesId array
+    // Remove the `id` from the AllprofilesId array
     requests.AllprofilesId.splice(index, 1);
 
     // Save the updated document
     await requests.save();
 
+    let deleteRequest = await DeleteRequest.findOne({
+      profileId: id, // 'id' should be saved in the `profileId` field
+    });
+
+    // If no document is found, create a new one
+    if (!deleteRequest) {
+      deleteRequest = new DeleteRequest({
+        profileId: id,
+        AllprofilesId: [requestId], // Initialize AllprofilesId array with the requestId
+        modifiedAt: new Date(),
+      });
+    } else {
+      // If the document already exists, update it
+      // Check if the requestId is already in the AllprofilesId array
+      if (!deleteRequest.AllprofilesId.includes(requestId)) {
+        deleteRequest.AllprofilesId.push(requestId); // Add requestId if it doesn't exist
+      }
+      deleteRequest.modifiedAt = new Date(); // Update the modifiedAt field
+    }
+
+    // Save the deleteRequest document after modifications
+    await deleteRequest.save();
+
+    console.log("....delete requests...", deleteRequest);
+    
     res.status(200).json({
-      message: 'Request deleted successfully',
-      data: requests
+      message: 'Request deleted and saved successfully',
+      data: {
+        updatedRequests: requests,
+        deleteRequest: deleteRequest
+      }
     });
   } catch (err) {
     console.error("Error processing request:", err);
@@ -726,6 +871,84 @@ const deleteRequestById = async (req, res) => {
 };
 
 
+const getAcceptInterest = async (req, res) => {
+  try {
+    const profileIdentifier = req.params.identifier;
+    console.log("...profileIdentifier...", profileIdentifier);
+    let data;
+
+    // Check if the identifier is an email or a phone number
+    if (profileIdentifier.includes('@')) {
+      data = await AllProfiles.findOne({ email: profileIdentifier }).select('AllprofilesId'); // Only retrieve the array
+    } else {
+      data = await AllProfiles.findOne({ phoneno: profileIdentifier }).select('AllprofilesId');
+    }
+
+    if (!data) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get the count of the elements in the AllprofilesId array
+    const count = data.AllprofilesId.length;
+
+    res.status(200).json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getSendRequestIds= async (req, res) => {
+  try {
+    const profileIdentifier = req.params.identifier;
+    console.log("...profileIdentifier...", profileIdentifier);
+    let data;
+
+    // Check if the identifier is an email or a phone number
+    if (profileIdentifier.includes('@')) {
+      data = await AllSendRequest.findOne({ email: profileIdentifier })
+    } else {
+      data = await AllSendRequest.findOne({ phoneno: profileIdentifier })
+    }
+
+    if (!data) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get the count of the elements in the AllprofilesId array
+    const count = data.AllprofilesId.length;
+
+    res.status(200).json({ 
+      count,
+      data
+     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getDeleteRequest = async (req, res) => {
+  try {
+    const profileIdentifier = req.params.identifier;
+    console.log("...profileIdentifier...", profileIdentifier);
+    let data;
+
+   
+    data = await DeleteRequest.findOne({ profileId : profileIdentifier })
+    if (!data) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get the count of the elements in the AllprofilesId array
+    const count = data.AllprofilesId.length;
+
+    res.status(200).json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = {
   pushAllTheSendId,
@@ -741,5 +964,8 @@ module.exports = {
   deletephotosByEmailOrPhoneNo,
   getphotosById,
   getAllRequestById,
-  deleteRequestById
+  deleteRequestById,
+  getAcceptInterest,
+  getSendRequestIds,
+  getDeleteRequest
 };
