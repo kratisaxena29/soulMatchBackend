@@ -40,6 +40,7 @@ router.get('/getAllRequestById/:id',profile_register.getAllRequestById)
 router.get('/getAcceptInterest/:identifier',profile_register.getAcceptInterest)
 router.get('/getSendRequestIds/:identifier',profile_register.getSendRequestIds)
 router.get('/getDeleteRequest/:identifier',profile_register.getDeleteRequest)
+router.post('/getIdProfile',profile_register.OpenId)
 
 router.get('/deleteRequestById',profile_register.deleteRequestById)
 router.get('/getallProfileById',profile_register.getAlltheProfileId)

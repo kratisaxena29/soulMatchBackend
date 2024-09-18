@@ -890,8 +890,11 @@ const getAcceptInterest = async (req, res) => {
 
     // Get the count of the elements in the AllprofilesId array
     const count = data.AllprofilesId.length;
-
-    res.status(200).json({ count });
+      const responseData = data.AllprofilesId
+      console.log("...res",responseData)
+    res.status(200).json({ 
+      responseData,
+      count });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -902,25 +905,26 @@ const getSendRequestIds= async (req, res) => {
   try {
     const profileIdentifier = req.params.identifier;
     console.log("...profileIdentifier...", profileIdentifier);
-    let data;
+    let dataProfile;
 
     // Check if the identifier is an email or a phone number
     if (profileIdentifier.includes('@')) {
-      data = await AllSendRequest.findOne({ email: profileIdentifier })
+      dataProfile = await AllSendRequest.findOne({ email: profileIdentifier })
     } else {
-      data = await AllSendRequest.findOne({ phoneno: profileIdentifier })
+      dataProfile = await AllSendRequest.findOne({ phoneno: profileIdentifier })
     }
 
-    if (!data) {
+    if (!dataProfile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
     // Get the count of the elements in the AllprofilesId array
-    const count = data.AllprofilesId.length;
-
+  
+    const count = dataProfile.AllprofilesId.length;
+    const responseData = dataProfile.AllprofilesId
     res.status(200).json({ 
       count,
-      data
+      responseData
      });
   } catch (error) {
     console.error(error);
@@ -942,13 +946,34 @@ const getDeleteRequest = async (req, res) => {
 
     // Get the count of the elements in the AllprofilesId array
     const count = data.AllprofilesId.length;
-
-    res.status(200).json({ count });
+const responseData = data.AllprofilesId
+    res.status(200).json({
+      responseData,
+       count });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+const OpenId = async (req, res) => {
+  const { ids } = req.body;
+  console.log("..ids...", ids);
+
+  try {
+    const profiles = await ProfileRegister.aggregate([
+      { 
+        $match: { _id: { $in: ids.map(id => new mongoose.Types.ObjectId(id)) } }
+      }
+    ]);
+    console.log("...profiles..", profiles);
+    res.status(200).json(profiles);
+  } catch (error) {
+    console.error("Error fetching profiles", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   pushAllTheSendId,
@@ -967,5 +992,6 @@ module.exports = {
   deleteRequestById,
   getAcceptInterest,
   getSendRequestIds,
-  getDeleteRequest
+  getDeleteRequest,
+  OpenId
 };
