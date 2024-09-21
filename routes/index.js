@@ -38,8 +38,12 @@ router.post('/allProfileId',profile_register.pushAllTheprofilesId)
 router.post('/AlltheSendRequestId',profile_register.pushAllTheSendId)
 router.get('/getAllRequestById/:id',profile_register.getAllRequestById)
 router.get('/getAcceptInterest/:identifier',profile_register.getAcceptInterest)
+router.get('/getOtherAccept/:identifier',profile_register.getOtherAccept)
+
 router.get('/getSendRequestIds/:identifier',profile_register.getSendRequestIds)
 router.get('/getDeleteRequest/:identifier',profile_register.getDeleteRequest)
+router.get('/getOtherDelete/:identifier',profile_register.getOtherDelete)
+
 router.post('/getIdProfile',profile_register.OpenId)
 
 router.get('/deleteRequestById',profile_register.deleteRequestById)

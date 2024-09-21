@@ -648,12 +648,12 @@ const getAllRequestById = async (req, res) => {
     console.log("...requests...", requests);
 
     // If no matching documents are found
-    if (requests.length === 0) {
-      return res.status(404).json({
-        message: 'No profiles found with the given id in AllprofilesId',
-        data: null
-      });
-    }
+    // if (requests.length === 0) {
+    //   return res.status(404).json({
+    //     message: 'No profiles found with the given id in AllprofilesId',
+    //     data: null
+    //   });
+    // }
 
     const profileIds = requests.map((request) => request.profileId);
     console.log("...profileIds...",profileIds)
@@ -901,6 +901,36 @@ const getAcceptInterest = async (req, res) => {
   }
 };
 
+const getOtherAccept = async (req, res) => {
+  try {
+    const profileIdentifier = req.params.identifier;
+    console.log("...profileIdentifier...", profileIdentifier);
+
+    // Find documents where the profileIdentifier exists in the AllprofilesId array
+    let data = await AllProfiles.find({ AllprofilesId: profileIdentifier });
+console.log("..data...",data)
+    if (!data || data.length === 0) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get the count of matching documents
+    const count = data.length;
+
+    // Optionally, you can just return the matched profiles' IDs
+    const responseData = data.map(profile => profile.profileId);
+    console.log("...res", responseData);
+
+    res.status(200).json({ 
+      responseData,
+      count 
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 const getSendRequestIds= async (req, res) => {
   try {
     const profileIdentifier = req.params.identifier;
@@ -946,7 +976,32 @@ const getDeleteRequest = async (req, res) => {
 
     // Get the count of the elements in the AllprofilesId array
     const count = data.AllprofilesId.length;
-const responseData = data.AllprofilesId
+     const responseData = data.AllprofilesId
+    res.status(200).json({
+      responseData,
+       count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getOtherDelete = async (req, res) => {
+  try {
+    const profileIdentifier = req.params.identifier;
+    console.log("...profileIdentifier...", profileIdentifier);
+    let data;
+
+   
+    data = await DeleteRequest.find({ AllprofilesId : profileIdentifier })
+    console.log("...data...",data)
+    if (!data) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    // Get the count of the elements in the AllprofilesId array
+    const count = data.length;
+     const responseData = data.map(profile => profile.profileId)
     res.status(200).json({
       responseData,
        count });
@@ -993,5 +1048,7 @@ module.exports = {
   getAcceptInterest,
   getSendRequestIds,
   getDeleteRequest,
+  getOtherAccept,
+  getOtherDelete,
   OpenId
 };
