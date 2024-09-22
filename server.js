@@ -21,16 +21,16 @@ const { Server } = require('socket.io');
 // }));
 
  const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
-// app.use(cors({
-//     origin: allowedOrigins,
-//     methods: ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-//     credentials: true,
-// }))
-
 app.use(cors({
-  origin: "*"  
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
 }))
+
+// app.use(cors({
+//   origin: "*"  
+// }))
 
 
 // const MONGODBURI = 'mongodb://127.0.0.1:27017/soulMatch'
