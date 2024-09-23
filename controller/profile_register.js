@@ -473,7 +473,7 @@ const getphotosByEmailOrPhoneNo = async (req, res) => {
       // Assuming it's a phone number
       data = await Photurl.findOne({ phoneNo: profileIdentifier });
     }
-    console.log("...data...", data)
+    console.log("...photo data...", data)
     if (!data) {
       return res.status(404).json({ message: 'Profile not found' });
     }
@@ -1019,8 +1019,33 @@ const OpenId = async (req, res) => {
     const profiles = await ProfileRegister.aggregate([
       { 
         $match: { _id: { $in: ids.map(id => new mongoose.Types.ObjectId(id)) } }
-      }
+      },
+      // Now the lookup is outside of $match
+      {
+        $lookup: {
+          from: "photurls", // The collection to join
+          let: { profileId : "$_id" }, // Use the email from ProfileRegister
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$id", "$$profileId"] } // Match email from Photurls with email from ProfileRegister
+              }
+            }
+          ],
+          as: "photoSection" // The resulting field that will hold the matched documents
+        }
+      },
+      { 
+        $unwind: { 
+          path: "$photoSection", 
+          preserveNullAndEmptyArrays: true // This ensures documents without a match are not dropped
+        }
+      },
+      
     ]);
+    
+    
+
     console.log("...profiles..", profiles);
     res.status(200).json(profiles);
   } catch (error) {

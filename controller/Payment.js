@@ -197,7 +197,8 @@ const checkStatus = async (req, res) => {
 
                 if (userProfile) {
                     // Update the plan field in userProfile
-                    userProfile.plan = response.data.data.amount; // Assuming the plan amount is stored in the payment response
+                    userProfile.plan = response.data.data.amount; 
+                    console.log("....its fit ...",response.data.data.amount)// Assuming the plan amount is stored in the payment response
                     await userProfile.save();
                     console.log("User profile updated with new plan.");
                 } else {
