@@ -206,75 +206,75 @@ gender : {
    ],
     Part_ageFrom : {
         type: String,
-    required : true 
+    required : false 
     },
     Part_martialStatus : {
         type: String,
-        required : true
+        required : false
     },
     Part_Religion : {
         type: String,
-        required : true
+        required : false
     },
     Part_Caste : {
         type: String,
-        required : true
+        required : false
     },
     Part_motherTongue : {
         type: String,
-        required : true
+        required : false
     },
     Part_subCaste : {
         type : String, 
-        required : true
+        required : false
     },
     Part_height : {
         type: String,
-        required : true
+        required : false
     },
     Part_horoscopeMatch : {
         type: String,
-        required : true
+        required : false
     },
     Part_petFriendly : {
         type: String,
-        required : true
+        required : false
     },
     Part_heighestEduction : {
         type: String,
-        required : true
+        required : false
     },
     Part_currentEmployee : {
         type: String,
-        required : true
+        required : false
     },
     Part_profession : {
         type: String,
-        required : true
+        required : false
     },
     Part_annualIncome : {
         type: String,
-        required : true
+        required : false
     },
     Part_yearsOfExpereience : {
         type: String,
-        required : true
+        required : false
     },
     Part_gender : {
         type: String,
-        required : true 
+        required : false 
     },
     Part_deit : {
         type: String,
-        required : true
+        required : false
     },
     Part_alcohol : {
         type: String,
-        required : true
+        required : false
     },
     Part_smoke : {
         type: String,
-        required : true
+        required : false
     },
     Part_interest : {
         type: String,
