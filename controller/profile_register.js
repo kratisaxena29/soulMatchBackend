@@ -153,125 +153,133 @@ console.log("..+${phoneno}...", formattedPhoneNo);
 
     // Now apply additional filtering on the limited profiles
     profiles = profiles.filter(profile => {
-      let parsedAgeRange;
+      // let parsedAgeRange;
 
-      if (ageRange) {
-        // Parse the ageRange if it's passed as a string
-        try {
-          parsedAgeRange = JSON.parse(ageRange);  // Use a new variable to store the parsed result
-        } catch (e) {
-          console.error("Error parsing ageRange:", e);
-          return false;
-        }
+      // if (ageRange) {
+      //   // Parse the ageRange if it's passed as a string
+      //   try {
+      //     parsedAgeRange = JSON.parse(ageRange);  // Use a new variable to store the parsed result
+      //   } catch (e) {
+      //     console.error("Error parsing ageRange:", e);
+      //     return false;
+      //   }
     
-        let isWithinAgeRange = false;
+      //   let isWithinAgeRange = false;
         
-        parsedAgeRange.forEach(range => {
+      //   parsedAgeRange.forEach(range => {
          
-          console.log("....parsedAgeRanges...",parsedAgeRange)
-          if(profile.Part_ageFrom.includes(parsedAgeRange)){
-            isWithinAgeRange = true;
-          }
-        });
+      //     console.log("....parsedAgeRanges...",parsedAgeRange)
+      //     if(profile.Part_ageFrom.includes(parsedAgeRange)){
+      //       isWithinAgeRange = true;
+      //     }
+      //   });
     
-        // If the profile's age is not within any of the ranges, filter it out
-        if (!isWithinAgeRange) {
-          return false;
-        }
-      }
-    
-      let parsedcaste;
-
-      if (caste) {
-        // Parse the ageRange if it's passed as a string
-        try {
-          parsedcaste = JSON.parse(caste);  // Use a new variable to store the parsed result
-        } catch (e) {
-          console.error("Error parsing ageRange:", e);
-          return false;
-        }
-    
-        let isWithinAgeRange = false;
-        
-        parsedcaste.forEach(range => {
-         
-          console.log("....parsedcaste...",parsedcaste)
-          if(profile.Part_Caste.includes(parsedcaste)){
-            isWithinAgeRange = true;
-          }
-        });
-    
-        // If the profile's age is not within any of the ranges, filter it out
-        if (!isWithinAgeRange) {
-          return false;
-        }
-      }
-
-
-      let parsedreligion;
-
-      if (religion) {
-        // Parse the ageRange if it's passed as a string
-        try {
-          parsedreligion = JSON.parse(religion);  // Use a new variable to store the parsed result
-        } catch (e) {
-          console.error("Error parsing ageRange:", e);
-          return false;
-        }
-    
-        let isWithinAgeRange = false;
-        
-        parsedreligion.forEach(range => {
-         
-          console.log("....parsedreligion...",parsedreligion)
-          if(profile.Part_Religion.includes(parsedreligion)){
-            isWithinAgeRange = true;
-          }
-        });
-    
-        // If the profile's age is not within any of the ranges, filter it out
-        if (!isWithinAgeRange) {
-          return false;
-        }
-      }
-
-      let parsedsubcaste;
-
-      if (religion) {
-        // Parse the ageRange if it's passed as a string
-        try {
-          parsedsubcaste = JSON.parse(subcaste);  // Use a new variable to store the parsed result
-        } catch (e) {
-          console.error("Error parsing ageRange:", e);
-          return false;
-        }
-    
-        let isWithinAgeRange = false;
-        
-        parsedsubcaste.forEach(range => {
-         
-          console.log("....parsedreligion...",parsedsubcaste)
-          if(profile.Part_subCaste.includes(parsedsubcaste)){
-            isWithinAgeRange = true;
-          }
-        });
-    
-        // If the profile's age is not within any of the ranges, filter it out
-        if (!isWithinAgeRange) {
-          return false;
-        }
-      }
-      // if (religion && !profile.Part_Religion.includes(religion)) {
-      //   return false;
+      //   // If the profile's age is not within any of the ranges, filter it out
+      //   if (!isWithinAgeRange) {
+      //     return false;
+      //   }
       // }
-      // if (caste && !profile.Part_Caste.includes(caste)) {
-      //   console.log(".caste..",caste)
-      //   console.log("..profile.Part_Caste..",profile.Part_Caste)
-      //   return false;
+    
+      // let parsedcaste;
+
+      // if (caste) {
+      //   // Parse the ageRange if it's passed as a string
+      //   try {
+      //     parsedcaste = JSON.parse(caste);  // Use a new variable to store the parsed result
+      //   } catch (e) {
+      //     console.error("Error parsing ageRange:", e);
+      //     return false;
+      //   }
+    
+      //   let isWithinAgeRange = false;
+        
+      //   parsedcaste.forEach(range => {
+         
+      //     console.log("....parsedcaste...",parsedcaste)
+      //     if(profile.Part_Caste.includes(parsedcaste)){
+      //       isWithinAgeRange = true;
+      //     }
+      //   });
+    
+      //   // If the profile's age is not within any of the ranges, filter it out
+      //   if (!isWithinAgeRange) {
+      //     return false;
+      //   }
       // }
-      // if (subcaste && !profile.Part_subCaste.includes(subcaste)) {
-      //   return false;
+
+
+      // let parsedreligion;
+
+      // if (religion) {
+      //   // Parse the ageRange if it's passed as a string
+      //   try {
+      //     parsedreligion = JSON.parse(religion);  // Use a new variable to store the parsed result
+      //   } catch (e) {
+      //     console.error("Error parsing ageRange:", e);
+      //     return false;
+      //   }
+    
+      //   let isWithinAgeRange = false;
+        
+      //   parsedreligion.forEach(range => {
+         
+      //     console.log("....parsedreligion...",parsedreligion)
+      //     if(profile.Part_Religion.includes(parsedreligion)){
+      //       isWithinAgeRange = true;
+      //     }
+      //   });
+    
+      //   // If the profile's age is not within any of the ranges, filter it out
+      //   if (!isWithinAgeRange) {
+      //     return false;
+      //   }
       // }
+
+      // let parsedsubcaste;
+
+      // if (subcaste) {
+      //   // Parse the ageRange if it's passed as a string
+      //   try {
+      //     parsedsubcaste = JSON.parse(subcaste);  // Use a new variable to store the parsed result
+      //   } catch (e) {
+      //     console.error("Error parsing ageRange:", e);
+      //     return false;
+      //   }
+    
+      //   let isWithinAgeRange = false;
+        
+      //   parsedsubcaste.forEach(range => {
+         
+      //     console.log("....parsedreligion...",parsedsubcaste)
+      //     if(profile.Part_subCaste.includes(parsedsubcaste)){
+      //       isWithinAgeRange = true;
+      //     }
+      //   });
+    
+      //   // If the profile's age is not within any of the ranges, filter it out
+      //   if (!isWithinAgeRange) {
+      //     return false;
+      //   }
+      // }
+
+      if (ageRange && !profile.Part_ageFrom.includes(ageRange)) {
+        return false;
+      }
+      if (religion && !profile.Part_Religion.includes(religion)) {
+        console.log(".religion..",religion)
+        console.log("..profile.Part_Religion..",profile.Part_Religion)
+        return false;
+      }
+      if (caste && !profile.Part_Caste.includes(caste)) {
+        console.log(".caste..",caste)
+        console.log("..profile.Part_Caste..",profile.Part_Caste)
+        return false;
+      }
+      if (subcaste && !profile.Part_subCaste.includes(subcaste)) {
+        console.log(".caste..",caste)
+        console.log("..profile.Part_Caste..",profile.Part_Caste)
+        return false;
+      }
       return true;
     });
     // console.log("..getprofile...",profiles)
