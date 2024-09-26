@@ -100,7 +100,7 @@ gender : {
    
    petFriendly : {
     type: String,
-    required : true
+    required : false
    },
    heighestEduction : {
     type: String,
@@ -140,7 +140,7 @@ gender : {
    },
    areYouManglik  : {
     type: String,
-    required : true
+    required : false
    },
    diet : {
     type: String,
@@ -204,82 +204,82 @@ gender : {
         type:String
     }
    ],
-    Part_ageFrom : {
+    Part_ageFrom : [{
         type: String,
     required : false 
-    },
-    Part_martialStatus : {
+    }],
+    Part_martialStatus : [{
         type: String,
         required : false
-    },
-    Part_Religion : {
+    }],
+    Part_Religion : [{
         type: String,
         required : false
-    },
-    Part_Caste : {
+    }],
+    Part_Caste : [{
         type: String,
         required : false
-    },
-    Part_motherTongue : {
+    }],
+    Part_motherTongue : [{
         type: String,
         required : false
-    },
-    Part_subCaste : {
+    }],
+    Part_subCaste : [{
         type : String, 
         required : false
-    },
-    Part_height : {
+    }],
+    Part_height : [{
         type: String,
         required : false
-    },
-    Part_horoscopeMatch : {
+    }],
+    Part_horoscopeMatch : [{
         type: String,
         required : false
-    },
-    Part_petFriendly : {
+    }],
+    Part_petFriendly : [{
         type: String,
         required : false
-    },
-    Part_heighestEduction : {
+    }],
+    Part_heighestEduction : [{
         type: String,
         required : false
-    },
-    Part_currentEmployee : {
+    }],
+    Part_currentEmployee : [{
         type: String,
         required : false
-    },
-    Part_profession : {
+    }],
+    Part_profession : [{
         type: String,
         required : false
-    },
-    Part_annualIncome : {
+    }],
+    Part_annualIncome : [{
         type: String,
         required : false
-    },
-    Part_yearsOfExpereience : {
+    }],
+    Part_yearsOfExpereience : [{
         type: String,
         required : false
-    },
+    }],
     Part_gender : {
         type: String,
         required : false 
     },
-    Part_deit : {
+    Part_deit : [{
         type: String,
         required : false
-    },
-    Part_alcohol : {
+    }],
+    Part_alcohol : [{
         type: String,
         required : false
-    },
-    Part_smoke : {
+    }],
+    Part_smoke : [{
         type: String,
         required : false
-    },
-    Part_interest : {
+    }],
+    Part_interest : [{
         type: String,
         required : false
-    },
+    }],
     fileUpload : {
         type: String,
         default : null

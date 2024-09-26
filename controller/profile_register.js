@@ -121,6 +121,7 @@ console.log("..+${phoneno}...", formattedPhoneNo);
 
     // Add gender-based filtering
     if (userProfile.Part_gender) {
+      console.log("...profilegender...",userProfile.Part_gender)
       filter.gender = userProfile.Part_gender;
       console.log("Gender filter applied:", filter.gender);
     } else {
@@ -143,6 +144,7 @@ console.log("..+${phoneno}...", formattedPhoneNo);
     }
 
     let profiles;
+    console.log("...limit..",limit)
     if (limit > 0) {
       profiles = await ProfileRegister.find(filter).limit(limit); // Apply limit first
     } else {
@@ -151,24 +153,128 @@ console.log("..+${phoneno}...", formattedPhoneNo);
 
     // Now apply additional filtering on the limited profiles
     profiles = profiles.filter(profile => {
+      let parsedAgeRange;
+
       if (ageRange) {
-        const [minAge, maxAge] = ageRange.split('-').map(Number);
-        if (profile.Part_ageFrom < minAge || profile.Part_ageFrom > maxAge) {
+        // Parse the ageRange if it's passed as a string
+        try {
+          parsedAgeRange = JSON.parse(ageRange);  // Use a new variable to store the parsed result
+        } catch (e) {
+          console.error("Error parsing ageRange:", e);
+          return false;
+        }
+    
+        let isWithinAgeRange = false;
+        
+        parsedAgeRange.forEach(range => {
+         
+          console.log("....parsedAgeRanges...",parsedAgeRange)
+          if(profile.Part_ageFrom.includes(parsedAgeRange)){
+            isWithinAgeRange = true;
+          }
+        });
+    
+        // If the profile's age is not within any of the ranges, filter it out
+        if (!isWithinAgeRange) {
           return false;
         }
       }
-      if (religion && profile.Part_Religion !== religion) {
-        return false;
+    
+      let parsedcaste;
+
+      if (caste) {
+        // Parse the ageRange if it's passed as a string
+        try {
+          parsedcaste = JSON.parse(caste);  // Use a new variable to store the parsed result
+        } catch (e) {
+          console.error("Error parsing ageRange:", e);
+          return false;
+        }
+    
+        let isWithinAgeRange = false;
+        
+        parsedcaste.forEach(range => {
+         
+          console.log("....parsedcaste...",parsedcaste)
+          if(profile.Part_Caste.includes(parsedcaste)){
+            isWithinAgeRange = true;
+          }
+        });
+    
+        // If the profile's age is not within any of the ranges, filter it out
+        if (!isWithinAgeRange) {
+          return false;
+        }
       }
-      if (caste && profile.Part_Caste !== caste) {
-        return false;
+
+
+      let parsedreligion;
+
+      if (religion) {
+        // Parse the ageRange if it's passed as a string
+        try {
+          parsedreligion = JSON.parse(religion);  // Use a new variable to store the parsed result
+        } catch (e) {
+          console.error("Error parsing ageRange:", e);
+          return false;
+        }
+    
+        let isWithinAgeRange = false;
+        
+        parsedreligion.forEach(range => {
+         
+          console.log("....parsedreligion...",parsedreligion)
+          if(profile.Part_Religion.includes(parsedreligion)){
+            isWithinAgeRange = true;
+          }
+        });
+    
+        // If the profile's age is not within any of the ranges, filter it out
+        if (!isWithinAgeRange) {
+          return false;
+        }
       }
-      if (subcaste && profile.Part_subCaste !== subcaste) {
-        return false;
+
+      let parsedsubcaste;
+
+      if (religion) {
+        // Parse the ageRange if it's passed as a string
+        try {
+          parsedsubcaste = JSON.parse(subcaste);  // Use a new variable to store the parsed result
+        } catch (e) {
+          console.error("Error parsing ageRange:", e);
+          return false;
+        }
+    
+        let isWithinAgeRange = false;
+        
+        parsedsubcaste.forEach(range => {
+         
+          console.log("....parsedreligion...",parsedsubcaste)
+          if(profile.Part_subCaste.includes(parsedsubcaste)){
+            isWithinAgeRange = true;
+          }
+        });
+    
+        // If the profile's age is not within any of the ranges, filter it out
+        if (!isWithinAgeRange) {
+          return false;
+        }
       }
+      // if (religion && !profile.Part_Religion.includes(religion)) {
+      //   return false;
+      // }
+      // if (caste && !profile.Part_Caste.includes(caste)) {
+      //   console.log(".caste..",caste)
+      //   console.log("..profile.Part_Caste..",profile.Part_Caste)
+      //   return false;
+      // }
+      // if (subcaste && !profile.Part_subCaste.includes(subcaste)) {
+      //   return false;
+      // }
       return true;
     });
-
+    // console.log("..getprofile...",profiles)
     return res.status(200).json({
       response: profiles,
       Message: 'Profiles fetched successfully',
