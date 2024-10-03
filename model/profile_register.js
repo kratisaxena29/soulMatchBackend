@@ -132,11 +132,11 @@ gender : {
    },
    timeOfBirth : {
     type: String,
-    required : true
+    required : false
    }, 
    placeofBirth : {
     type: String,
-    required : true
+    required : false
    },
    areYouManglik  : {
     type: String,
