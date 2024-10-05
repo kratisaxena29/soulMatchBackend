@@ -39,6 +39,7 @@ router.post('/AlltheSendRequestId',profile_register.pushAllTheSendId)
 router.get('/getAllRequestById/:id',profile_register.getAllRequestById)
 router.get('/getAcceptInterest/:identifier',profile_register.getAcceptInterest)
 router.get('/getOtherAccept/:identifier',profile_register.getOtherAccept)
+router.get('/identifytheId/:profileId/:checkingId',profile_register.IdentifyTheId)
 
 router.get('/getSendRequestIds/:identifier',profile_register.getSendRequestIds)
 router.get('/getDeleteRequest/:identifier',profile_register.getDeleteRequest)

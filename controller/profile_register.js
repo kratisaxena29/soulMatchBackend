@@ -1169,6 +1169,43 @@ const OpenId = async (req, res) => {
 };
 
 
+
+const IdentifyTheId = async (req, res) => {
+  const { profileId, checkingId } = req.params; // Extract both profileId and checkingId from the URL
+  console.log("profileId...", profileId, "checkingId...", checkingId);
+
+  try {
+    // Query using profileId (convert to ObjectId if it's stored as such in DB)
+    const getId = await AllProfiles.findOne({ profileId: profileId });
+
+    console.log("getId...", getId);
+
+    if (getId) {
+      // Check if checkingId exists in the AllprofilesId array
+      const isIdPresent = getId.AllprofilesId.some(id => id.equals(new ObjectId(checkingId)));
+console.log("...is presrnt....",isIdPresent)
+      if (isIdPresent) {
+        return res.status(200).json({
+          message: "yes data found",
+          status : 200
+        });
+      } else {
+        return res.status(404).json({
+          message: "checkingId not found in AllprofilesId array",
+          status : 400
+        });
+      }
+    } else {
+      return res.status(404).json({
+        message: "profileId not found"
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   pushAllTheSendId,
   profileRegister,
@@ -1189,5 +1226,6 @@ module.exports = {
   getDeleteRequest,
   getOtherAccept,
   getOtherDelete,
-  OpenId
+  OpenId,
+  IdentifyTheId
 };
