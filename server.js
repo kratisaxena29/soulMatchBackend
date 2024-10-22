@@ -27,6 +27,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type'],
     credentials: true,
 }))
+// krati
 
 // app.use(cors({
 //   origin: "*"  
