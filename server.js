@@ -20,7 +20,7 @@ const { Server } = require('socket.io');
 //     credentials: true
 // }));
 
- const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
+  const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
 app.use(cors({
     origin: allowedOrigins,
     methods: ['GET', 'POST'],
