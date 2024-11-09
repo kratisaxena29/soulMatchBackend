@@ -19,7 +19,7 @@ const { Server } = require('socket.io');
 //     },
 //     credentials: true
 // }));
-
+//krati
   const allowedOrigins = ['https://www.soulmatch.co.in', 'https://soulmatch.co.in'];
 app.use(cors({
     origin: allowedOrigins,
